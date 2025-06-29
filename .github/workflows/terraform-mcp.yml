@@ -13,13 +13,16 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        env_folder: [dev] # Add 'prod' to this list to deploy prod as well
     env:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      TF_RESOURCE_GROUP_NAME: ${{ secrets.TF_RESOURCE_GROUP_NAME }} # <-- Add as repository or environment secret
-      TF_LOCATION: ${{ secrets.TF_LOCATION }}                 # <-- Add as repository or environment secret
+      TF_RESOURCE_GROUP_NAME: ${{ secrets.TF_RESOURCE_GROUP_NAME }}
+      TF_LOCATION: ${{ secrets.TF_LOCATION }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,7 +40,7 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
-            -v ${{ github.workspace }}:/src \
+            -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
             hashicorp/terraform:latest -chdir=/src init -input=false
@@ -51,7 +54,7 @@ jobs:
             -e ARM_TENANT_ID \
             -e TF_RESOURCE_GROUP_NAME \
             -e TF_LOCATION \
-            -v ${{ github.workspace }}:/src \
+            -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
             hashicorp/terraform:latest -chdir=/src import azurerm_resource_group.keyvault_rg "$TF_RESOURCE_GROUP_NAME" || true
@@ -65,7 +68,7 @@ jobs:
             -e ARM_TENANT_ID \
             -e TF_RESOURCE_GROUP_NAME \
             -e TF_LOCATION \
-            -v ${{ github.workspace }}:/src \
+            -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
             hashicorp/terraform:latest -chdir=/src plan -input=false -out=tfplan -var "resource_group_name=$TF_RESOURCE_GROUP_NAME" -var "location=$TF_LOCATION"
@@ -80,7 +83,7 @@ jobs:
             -e ARM_TENANT_ID \
             -e TF_RESOURCE_GROUP_NAME \
             -e TF_LOCATION \
-            -v ${{ github.workspace }}:/src \
+            -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
             hashicorp/terraform:latest -chdir=/src apply -input=false -auto-approve tfplan
