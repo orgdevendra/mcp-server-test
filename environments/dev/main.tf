@@ -13,14 +13,14 @@ provider "azurerm" {
 }
 
 module "resource_group" {
-  source   = "../../modules/resource_group"
+  source   = "modules/resource_group"
   name     = var.resource_group_name
   location = var.location
 }
 
 module "storage_account" {
-  source              = "../../modules/storage_account"
-  name                = var.storage_account_name
+  source              = "modules/storage_account"
+    name                = var.storage_account_name
   location            = var.location
   resource_group_name = module.resource_group.name
   account_tier        = var.storage_account_tier
@@ -28,7 +28,7 @@ module "storage_account" {
 }
 
 module "key_vault" {
-  source              = "../../modules/key_vault"
+  source              = "modules/key_vault"
   name                = var.key_vault_name
   location            = var.location
   resource_group_name = module.resource_group.name
