@@ -70,11 +70,20 @@ jobs:
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
             hashicorp/terraform:latest -chdir=/src plan -input=false -out=tfplan \
-            -var 'resource_group_resource={name="${{ secrets.TF_RESOURCE_GROUP_NAME }}",location="${{ secrets.TF_LOCATION }}"}' \
-            -var 'storage_account_resource={name="${{ secrets.TF_STORAGE_ACCOUNT_NAME }}",location="${{ secrets.TF_LOCATION }}",account_tier="Standard",account_replication_type="LRS"}' \
-            -var 'key_vault_resource={name="${{ secrets.TF_KEY_VAULT_NAME }}",location="${{ secrets.TF_LOCATION }}",tenant_id="${{ secrets.TF_TENANT_ID }}",sku_name="standard",soft_delete_retention_days=7,purge_protection_enabled=true}' \
-            -var 'app_service_plan_resource={name="${{ secrets.TF_APP_SERVICE_PLAN_NAME }}",location="${{ secrets.TF_LOCATION }}",os_type="Linux",sku_name="P1v2"}' \
-            -var 'web_app_resource={name="${{ secrets.TF_WEB_APP_NAME }}",location="${{ secrets.TF_LOCATION }}",service_plan_id=""}'
+            -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+            -var 'location=${{ secrets.TF_LOCATION }}' \
+            -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+            -var 'storage_account_tier=Standard' \
+            -var 'storage_account_replication_type=LRS' \
+            -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
+            -var 'key_vault_tenant_id=${{ secrets.TF_TENANT_ID }}' \
+            -var 'key_vault_sku_name=standard' \
+            -var 'key_vault_soft_delete_retention_days=7' \
+            -var 'key_vault_purge_protection_enabled=true' \
+            -var 'app_service_plan_name=${{ secrets.TF_APP_SERVICE_PLAN_NAME }}' \
+            -var 'app_service_plan_os_type=Linux' \
+            -var 'app_service_plan_sku_name=P1v2' \
+            -var 'web_app_name=${{ secrets.TF_WEB_APP_NAME }}'
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
