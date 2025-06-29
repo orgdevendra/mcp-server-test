@@ -37,9 +37,10 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
-            hashicorp/terraform:latest init -input=false
+            hashicorp/terraform:latest -chdir=/src init -input=false
 
       - name: Terraform Import Resource Group (if exists)
         run: |
@@ -50,9 +51,10 @@ jobs:
             -e ARM_TENANT_ID \
             -e TF_RESOURCE_GROUP_NAME \
             -e TF_LOCATION \
+            -v ${{ github.workspace }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
-            hashicorp/terraform:latest import azurerm_resource_group.keyvault_rg "$TF_RESOURCE_GROUP_NAME" || true
+            hashicorp/terraform:latest -chdir=/src import azurerm_resource_group.keyvault_rg "$TF_RESOURCE_GROUP_NAME" || true
 
       - name: Terraform Plan
         run: |
@@ -63,9 +65,10 @@ jobs:
             -e ARM_TENANT_ID \
             -e TF_RESOURCE_GROUP_NAME \
             -e TF_LOCATION \
+            -v ${{ github.workspace }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
-            hashicorp/terraform:latest plan -input=false -out=tfplan -var "resource_group_name=$TF_RESOURCE_GROUP_NAME" -var "location=$TF_LOCATION"
+            hashicorp/terraform:latest -chdir=/src plan -input=false -out=tfplan -var "resource_group_name=$TF_RESOURCE_GROUP_NAME" -var "location=$TF_LOCATION"
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -77,9 +80,10 @@ jobs:
             -e ARM_TENANT_ID \
             -e TF_RESOURCE_GROUP_NAME \
             -e TF_LOCATION \
+            -v ${{ github.workspace }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
-            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
+            hashicorp/terraform:latest -chdir=/src apply -input=false -auto-approve tfplan
 
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
