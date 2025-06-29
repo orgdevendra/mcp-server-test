@@ -1,48 +1,69 @@
-variable "resource_group_resource" {
-  description = "Resource group resource object for AVM module."
-  type = object({
-    name     = string
-    location = string
-  })
+variable "resource_group_name" {
+  description = "Name of the resource group."
+  type        = string
 }
 
-variable "storage_account_resource" {
-  description = "Storage account resource object for AVM module."
-  type = object({
-    name     = string
-    location = string
-    account_tier = string
-    account_replication_type = string
-  })
+variable "location" {
+  description = "Azure region for all resources."
+  type        = string
 }
 
-variable "key_vault_resource" {
-  description = "Key vault resource object for AVM module."
-  type = object({
-    name     = string
-    location = string
-    tenant_id = string
-    sku_name = string
-    soft_delete_retention_days = number
-    purge_protection_enabled = bool
-  })
+variable "storage_account_name" {
+  description = "Name of the storage account."
+  type        = string
 }
 
-variable "app_service_plan_resource" {
-  description = "App service plan resource object for AVM module."
-  type = object({
-    name     = string
-    location = string
-    os_type  = string
-    sku_name = string
-  })
+variable "storage_account_tier" {
+  description = "Storage account tier."
+  type        = string
 }
 
-variable "web_app_resource" {
-  description = "Web app resource object for AVM module."
-  type = object({
-    name     = string
-    location = string
-    service_plan_id = string
-  })
+variable "storage_account_replication_type" {
+  description = "Storage account replication type."
+  type        = string
+}
+
+variable "key_vault_name" {
+  description = "Name of the Key Vault."
+  type        = string
+}
+
+variable "key_vault_tenant_id" {
+  description = "Tenant ID for the Key Vault."
+  type        = string
+}
+
+variable "key_vault_sku_name" {
+  description = "SKU name for the Key Vault."
+  type        = string
+}
+
+variable "key_vault_soft_delete_retention_days" {
+  description = "Soft delete retention days for Key Vault."
+  type        = number
+}
+
+variable "key_vault_purge_protection_enabled" {
+  description = "Enable purge protection for Key Vault."
+  type        = bool
+}
+
+variable "app_service_plan_name" {
+  description = "Name of the App Service Plan."
+  type        = string
+}
+
+variable "app_service_plan_os_type" {
+  description = "OS type for the App Service Plan."
+  type        = string
+}
+
+variable "app_service_plan_sku_name" {
+  description = "SKU name for the App Service Plan."
+  type        = string
+}
+
+variable "web_app_name" {
+  description = "Name of the Web App."
+  type        = string
 }
