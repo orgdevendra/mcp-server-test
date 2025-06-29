@@ -27,6 +27,9 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
+      - name: Prepare Terraform State Directory
+        run: mkdir -p ${{ github.workspace }}/tfstate
+
       - name: Terraform Init
         run: |
           docker run --rm \
@@ -34,7 +37,7 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
-            -v ${{ github.workspace }}:/workspace \
+            -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
             hashicorp/terraform:latest init -input=false
 
@@ -47,7 +50,7 @@ jobs:
             -e ARM_TENANT_ID \
             -e TF_RESOURCE_GROUP_NAME \
             -e TF_LOCATION \
-            -v ${{ github.workspace }}:/workspace \
+            -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
             hashicorp/terraform:latest import azurerm_resource_group.keyvault_rg "$TF_RESOURCE_GROUP_NAME" || true
 
@@ -60,7 +63,7 @@ jobs:
             -e ARM_TENANT_ID \
             -e TF_RESOURCE_GROUP_NAME \
             -e TF_LOCATION \
-            -v ${{ github.workspace }}:/workspace \
+            -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
             hashicorp/terraform:latest plan -input=false -out=tfplan -var "resource_group_name=$TF_RESOURCE_GROUP_NAME" -var "location=$TF_LOCATION"
 
@@ -74,7 +77,7 @@ jobs:
             -e ARM_TENANT_ID \
             -e TF_RESOURCE_GROUP_NAME \
             -e TF_LOCATION \
-            -v ${{ github.workspace }}:/workspace \
+            -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
             hashicorp/terraform:latest apply -input=false -auto-approve tfplan
 
