@@ -20,7 +20,7 @@ module "resource_group" {
 
 module "storage_account" {
   source              = "../../modules/storage_account"
-    name                = var.storage_account_name
+  name                = var.storage_account_name
   location            = var.location
   resource_group_name = module.resource_group.name
   account_tier        = var.storage_account_tier
