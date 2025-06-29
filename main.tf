@@ -21,7 +21,7 @@ module "resource_group" {
 # Azure Key Vault resource
 resource "azurerm_key_vault" "prod" {
   name                        = var.key_vault_name
-  location                    = module.resource_group.location
+  location                    = var.location
   resource_group_name         = module.resource_group.name
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   sku_name                    = var.key_vault_sku
@@ -33,7 +33,7 @@ resource "azurerm_key_vault" "prod" {
 resource "azurerm_storage_account" "example" {
   name                     = "examplestorage${random_integer.suffix.result}"
   resource_group_name      = module.resource_group.name
-  location                 = module.resource_group.location
+  location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
   is_hns_enabled           = true # Enable Hierarchical Namespace (Data Lake Storage Gen2)
