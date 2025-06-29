@@ -15,47 +15,37 @@ provider "azurerm" {
 module "resource_group" {
   source  = "Azure/avm-res-resources-resourcegroup/azurerm"
   version = ">= 0.1.0"
-  name     = var.resource_group_name
-  location = var.location
+  resource = var.resource_group_resource
 }
 
 module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
   version = ">= 0.1.0"
-  name                = var.storage_account_name
-  resource_group_name = module.resource_group.name
-  location            = module.resource_group.location
-  account_tier        = var.storage_account_tier
-  account_replication_type = var.storage_account_replication_type
+  resource = merge(var.storage_account_resource, {
+    resource_group_name = module.resource_group.resource.name
+  })
 }
 
 module "key_vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
   version = ">= 0.1.0"
-  name                = var.key_vault_name
-  location            = module.resource_group.location
-  resource_group_name = module.resource_group.name
-  tenant_id           = var.tenant_id
-  sku_name            = var.key_vault_sku
-  soft_delete_retention_days = var.key_vault_soft_delete_retention_days
-  purge_protection_enabled   = var.key_vault_purge_protection_enabled
+  resource = merge(var.key_vault_resource, {
+    resource_group_name = module.resource_group.resource.name
+  })
 }
 
 module "app_service_plan" {
   source  = "Azure/avm-res-web-serverfarm/azurerm"
   version = ">= 0.1.0"
-  name                = var.app_service_plan_name
-  location            = module.resource_group.location
-  resource_group_name = module.resource_group.name
-  os_type             = var.app_service_plan_os_type
-  sku_name            = var.app_service_plan_sku
+  resource = merge(var.app_service_plan_resource, {
+    resource_group_name = module.resource_group.resource.name
+  })
 }
 
 module "web_app" {
   source  = "Azure/avm-res-web-site/azurerm"
   version = ">= 0.1.0"
-  name                = var.web_app_name
-  location            = module.resource_group.location
-  resource_group_name = module.resource_group.name
-  service_plan_id     = module.app_service_plan.id
+  resource = merge(var.web_app_resource, {
+    resource_group_name = module.resource_group.resource.name
+  })
 }
