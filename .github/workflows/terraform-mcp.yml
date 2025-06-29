@@ -39,10 +39,9 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
-            -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
-            -v ${{ github.workspace }}/tfstate:/workspace \
-            -w /workspace \
-            hashicorp/terraform:latest -chdir=/src init -input=false
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest init -input=false
 
       - name: Terraform Plan
         run: |
@@ -51,10 +50,9 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
-            -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
-            -v ${{ github.workspace }}/tfstate:/workspace \
-            -w /workspace \
-            hashicorp/terraform:latest -chdir=/src plan -input=false -out=tfplan \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest plan -input=false -out=tfplan \
             -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
             -var 'location=${{ secrets.TF_LOCATION }}' \
             -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
@@ -74,14 +72,13 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
-            -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
-            -v ${{ github.workspace }}/tfstate:/workspace \
-            -w /workspace \
-            hashicorp/terraform:latest -chdir=/src apply -input=false -auto-approve tfplan
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
 
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
-          path: tfplan
+          path: environments/${{ matrix.env_folder }}/tfplan
