@@ -38,6 +38,19 @@ jobs:
             -w /workspace \
             hashicorp/terraform:latest init -input=false
 
+      - name: Terraform Import Resource Group (if exists)
+        run: |
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -e TF_RESOURCE_GROUP_NAME \
+            -e TF_LOCATION \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            hashicorp/terraform:latest import azurerm_resource_group.keyvault_rg "$TF_RESOURCE_GROUP_NAME" || true
+
       - name: Terraform Plan
         run: |
           docker run --rm \
