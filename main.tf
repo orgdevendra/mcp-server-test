@@ -11,17 +11,11 @@ provider "azurerm" {
 
 data "azurerm_client_config" "current" {}
 
-# Resource Group for the Key Vault
-resource "azurerm_resource_group" "keyvault_rg" {
-  name     = var.resource_group_name
-  location = var.location
-}
-
 # Azure Key Vault resource
 resource "azurerm_key_vault" "prod" {
   name                        = var.key_vault_name
-  location                    = azurerm_resource_group.keyvault_rg.location
-  resource_group_name         = azurerm_resource_group.keyvault_rg.name
+  location                    = var.location
+  resource_group_name         = var.resource_group_name
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   sku_name                    = var.key_vault_sku
   soft_delete_retention_days  = var.soft_delete_retention_days
