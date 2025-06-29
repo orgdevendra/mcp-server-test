@@ -34,7 +34,7 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
-            hashicorp/terraform-mcp-server:latest init
+            hashicorp/terraform-mcp-server:latest init -input=false
 
       - name: Terraform Plan (MCP Server)
         run: |
@@ -45,7 +45,7 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
-            hashicorp/terraform-mcp-server:latest plan -out=tfplan
+            hashicorp/terraform-mcp-server:latest plan -input=false -out=tfplan
 
       - name: Terraform Apply (MCP Server)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -57,7 +57,7 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
-            hashicorp/terraform-mcp-server:latest apply -auto-approve tfplan
+            hashicorp/terraform-mcp-server:latest apply -input=false -auto-approve tfplan
 
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
