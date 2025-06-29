@@ -35,6 +35,39 @@ resource "azurerm_storage_account" "example" {
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  is_hns_enabled           = true # Enable Hierarchical Namespace (Data Lake Storage Gen2)
+}
+
+resource "azurerm_storage_container" "rows" {
+  name                  = "rows"
+  storage_account_name  = azurerm_storage_account.example.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_data_lake_gen2_filesystem" "rows" {
+  name               = azurerm_storage_container.rows.name
+  storage_account_id = azurerm_storage_account.example.id
+}
+
+resource "azurerm_storage_data_lake_gen2_path" "raw" {
+  path               = "RAW"
+  filesystem_name    = azurerm_storage_data_lake_gen2_filesystem.rows.name
+  storage_account_id = azurerm_storage_account.example.id
+  resource           = "directory"
+}
+
+resource "azurerm_storage_data_lake_gen2_path" "silver" {
+  path               = "SILVER"
+  filesystem_name    = azurerm_storage_data_lake_gen2_filesystem.rows.name
+  storage_account_id = azurerm_storage_account.example.id
+  resource           = "directory"
+}
+
+resource "azurerm_storage_data_lake_gen2_path" "gold" {
+  path               = "GOLD"
+  filesystem_name    = azurerm_storage_data_lake_gen2_filesystem.rows.name
+  storage_account_id = azurerm_storage_account.example.id
+  resource           = "directory"
 }
 
 resource "random_integer" "suffix" {
