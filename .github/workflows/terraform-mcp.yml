@@ -74,8 +74,7 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
-            hashicorp/terraform:latest apply -input=false -auto-approve tfplan \
-            -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}'
+            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
 
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
