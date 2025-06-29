@@ -11,11 +11,18 @@ provider "azurerm" {
 
 data "azurerm_client_config" "current" {}
 
+module "resource_group" {
+  source  = "Azure/avm-res-resources-resourcegroup/azurerm"
+  version = ">= 0.1.0"
+  name     = var.resource_group_name
+  location = var.location
+}
+
 # Azure Key Vault resource
 resource "azurerm_key_vault" "prod" {
   name                        = var.key_vault_name
-  location                    = var.location
-  resource_group_name         = var.resource_group_name
+  location                    = module.resource_group.location
+  resource_group_name         = module.resource_group.name
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   sku_name                    = var.key_vault_sku
   soft_delete_retention_days  = var.soft_delete_retention_days
@@ -25,8 +32,8 @@ resource "azurerm_key_vault" "prod" {
 
 resource "azurerm_storage_account" "example" {
   name                     = "examplestorage${random_integer.suffix.result}"
-  resource_group_name      = var.resource_group_name
-  location                 = var.location
+  resource_group_name      = module.resource_group.name
+  location                 = module.resource_group.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
   is_hns_enabled           = true # Enable Hierarchical Namespace (Data Lake Storage Gen2)
@@ -69,7 +76,4 @@ resource "random_integer" "suffix" {
   max = 99999
 }
 
-# resource "azurerm_resource_group" "keyvault_rg" {
-#   name     = var.resource_group_name
-#   location = var.location
-# }
+# The direct resource group resource is removed. All resources now use the AVM module output.
