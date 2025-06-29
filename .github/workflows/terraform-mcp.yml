@@ -18,6 +18,8 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      TF_RESOURCE_GROUP_NAME: ${{ secrets.TF_RESOURCE_GROUP_NAME }} # <-- Add as repository or environment secret
+      TF_LOCATION: ${{ secrets.TF_LOCATION }}                 # <-- Add as repository or environment secret
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -43,9 +45,11 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
+            -e TF_RESOURCE_GROUP_NAME \
+            -e TF_LOCATION \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
-            hashicorp/terraform:latest plan -input=false -out=tfplan
+            hashicorp/terraform:latest plan -input=false -out=tfplan -var "resource_group_name=$TF_RESOURCE_GROUP_NAME" -var "location=$TF_LOCATION"
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -55,9 +59,11 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
+            -e TF_RESOURCE_GROUP_NAME \
+            -e TF_LOCATION \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
-            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
+            hashicorp/terraform:latest apply -input=false -auto-approve tfplan -var "resource_group_name=$TF_RESOURCE_GROUP_NAME" -var "location=$TF_LOCATION"
 
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
