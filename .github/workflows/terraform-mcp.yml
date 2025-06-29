@@ -84,7 +84,7 @@ jobs:
             -var 'app_service_plan_os_type=Linux' \
             -var 'app_service_plan_sku_name=P1v2' \
             -var 'web_app_name=${{ secrets.TF_WEB_APP_NAME }}' \
-            -var 'web_app_kind=app' \
+            -var 'web_app_kind=webapp' \
             -var 'web_app_os_type=Linux'
 
       - name: Terraform Apply
