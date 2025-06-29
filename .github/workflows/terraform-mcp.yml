@@ -45,19 +45,23 @@ jobs:
             -w /workspace \
             hashicorp/terraform:latest -chdir=/src init -input=false
 
-      # - name: Terraform Import Resource Group (if exists)
-      #   run: |
-      #     docker run --rm \
-      #       -e ARM_CLIENT_ID \
-      #       -e ARM_CLIENT_SECRET \
-      #       -e ARM_SUBSCRIPTION_ID \
-      #       -e ARM_TENANT_ID \
-      #       -e TF_RESOURCE_GROUP_NAME \
-      #       -e TF_LOCATION \
-      #       -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
-      #       -v ${{ github.workspace }}/tfstate:/workspace \
-      #       -w /workspace \
-      #       hashicorp/terraform:latest -chdir=/src import azurerm_resource_group.keyvault_rg "$TF_RESOURCE_GROUP_NAME" || true
+      - name: Terraform Import All Existing Resources
+        run: |
+          # Import Resource Group if it exists
+          terraform state show azurerm_resource_group.keyvault_rg || terraform import azurerm_resource_group.keyvault_rg "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ env.TF_RESOURCE_GROUP_NAME }}" || true
+          # Import Key Vault if it exists
+          terraform state show azurerm_key_vault.prod || terraform import azurerm_key_vault.prod "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ env.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.KeyVault/vaults/${{ secrets.TF_KEY_VAULT_NAME }}" || true
+          # Import Storage Account if it exists
+          terraform state show azurerm_storage_account.example || terraform import azurerm_storage_account.example "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ env.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}" || true
+          # Import Storage Container if it exists
+          terraform state show azurerm_storage_container.rows || terraform import azurerm_storage_container.rows "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/rows" || true
+          # Import Data Lake Gen2 Filesystem if it exists
+          terraform state show azurerm_storage_data_lake_gen2_filesystem.rows || terraform import azurerm_storage_data_lake_gen2_filesystem.rows "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ env.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}/fileServices/default/filesystems/rows" || true
+          # Import Data Lake Gen2 Paths if they exist
+          terraform state show azurerm_storage_data_lake_gen2_path.raw || terraform import azurerm_storage_data_lake_gen2_path.raw "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ env.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}/fileServices/default/filesystems/rows/directory/RAW" || true
+          terraform state show azurerm_storage_data_lake_gen2_path.silver || terraform import azurerm_storage_data_lake_gen2_path.silver "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ env.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}/fileServices/default/filesystems/rows/directory/SILVER" || true
+          terraform state show azurerm_storage_data_lake_gen2_path.gold || terraform import azurerm_storage_data_lake_gen2_path.gold "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ env.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}/fileServices/default/filesystems/rows/directory/GOLD" || true
+          # Add similar import logic for other resources as needed
 
       - name: Terraform Plan
         run: |
