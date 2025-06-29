@@ -13,14 +13,14 @@ provider "azurerm" {
 }
 
 module "resource_group" {
-  source  = "Azure/avm-res-group/azurerm"
+  source  = "Azure/avm-res-resources-resourcegroup/azurerm"
   version = ">= 0.1.0"
   name     = var.resource_group_name
   location = var.location
 }
 
 module "storage_account" {
-  source  = "Azure/avm-res-storageaccount/azurerm"
+  source  = "Azure/avm-res-storage-storageaccount/azurerm"
   version = ">= 0.1.0"
   name                = var.storage_account_name
   resource_group_name = module.resource_group.name
@@ -30,7 +30,7 @@ module "storage_account" {
 }
 
 module "key_vault" {
-  source  = "Azure/avm-res-keyvault/azurerm"
+  source  = "Azure/avm-res-keyvault-vault/azurerm"
   version = ">= 0.1.0"
   name                = var.key_vault_name
   location            = module.resource_group.location
@@ -42,7 +42,7 @@ module "key_vault" {
 }
 
 module "app_service_plan" {
-  source  = "Azure/avm-res-appserviceplan/azurerm"
+  source  = "Azure/avm-res-web-serverfarm/azurerm"
   version = ">= 0.1.0"
   name                = var.app_service_plan_name
   location            = module.resource_group.location
@@ -52,7 +52,7 @@ module "app_service_plan" {
 }
 
 module "web_app" {
-  source  = "Azure/avm-res-webapp/azurerm"
+  source  = "Azure/avm-res-web-site/azurerm"
   version = ">= 0.1.0"
   name                = var.web_app_name
   location            = module.resource_group.location
