@@ -1,4 +1,6 @@
 # Variables for Azure Key Vault deployment
+# NOTE: The resource group 'rg-avm-290625' must be imported into Terraform state before apply.
+# This is handled in the GitHub Actions workflow. Do not attempt to create it directly.
 variable "location" {
   description = "The Azure region to deploy resources into."
   type        = string
@@ -8,6 +10,7 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the resource group in which to create resources."
   type        = string
+  default     = "rg-avm-290625"
 }
 
 variable "key_vault_name" {
