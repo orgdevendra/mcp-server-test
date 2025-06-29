@@ -1,0 +1,15 @@
+{
+  "servers": {
+    "terraform": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "hashicorp/terraform-mcp-server"
+      ]
+    }
+  }
+}
+// This file configures the Terraform MCP server to run in a Docker container.
+// The MCP server is used to provide language features for Terraform in editors that support the MCP protocol
