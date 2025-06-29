@@ -25,7 +25,7 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
-      - name: Terraform Init (MCP Server)
+      - name: Terraform Init
         run: |
           docker run --rm \
             -e ARM_CLIENT_ID \
@@ -34,9 +34,9 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
-            hashicorp/terraform-mcp-server:latest init -input=false
+            hashicorp/terraform:latest init -input=false
 
-      - name: Terraform Plan (MCP Server)
+      - name: Terraform Plan
         run: |
           docker run --rm \
             -e ARM_CLIENT_ID \
@@ -45,9 +45,9 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
-            hashicorp/terraform-mcp-server:latest plan -input=false -out=tfplan
+            hashicorp/terraform:latest plan -input=false -out=tfplan
 
-      - name: Terraform Apply (MCP Server)
+      - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           docker run --rm \
@@ -57,7 +57,7 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
-            hashicorp/terraform-mcp-server:latest apply -input=false -auto-approve tfplan
+            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
 
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
