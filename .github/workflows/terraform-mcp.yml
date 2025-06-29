@@ -47,8 +47,8 @@ jobs:
 
       - name: Terraform Import All Existing Resources
         run: |
-          # Import Resource Group if it exists
-          terraform state show azurerm_resource_group.keyvault_rg || terraform import azurerm_resource_group.keyvault_rg "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ env.TF_RESOURCE_GROUP_NAME }}" || true
+          # Import Resource Group for AVM module if it exists
+          terraform state show 'module.resource_group.azurerm_resource_group.this' || terraform import 'module.resource_group.azurerm_resource_group.this' "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/rg-avm-290625" || true
           # Import Key Vault if it exists
           terraform state show azurerm_key_vault.prod || terraform import azurerm_key_vault.prod "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ env.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.KeyVault/vaults/${{ secrets.TF_KEY_VAULT_NAME }}" || true
           # Import Storage Account if it exists
