@@ -37,6 +37,7 @@ module "key_vault" {
 module "app_service_plan" {
   source  = "Azure/avm-res-web-serverfarm/azurerm"
   version = ">= 0.1.0"
+  resource_group_name = module.resource_group.resource.name
   resource = merge(var.app_service_plan_resource, {
     resource_group_name = module.resource_group.resource.name
   })
