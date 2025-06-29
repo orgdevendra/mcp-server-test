@@ -115,6 +115,30 @@ jobs:
               'module.storage_account.azurerm_storage_account.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}"
 
+      - name: Terraform Import Storage Container
+        run: |
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'location=${{ secrets.TF_LOCATION }}' \
+              -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'storage_account_tier=Standard' \
+              -var 'storage_account_replication_type=LRS' \
+              -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'key_vault_sku_name=standard' \
+              -var 'key_vault_soft_delete_retention_days=7' \
+              -var 'key_vault_purge_protection_enabled=true' \
+              'module.storage_account.azurerm_storage_container.rows' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}/blobServices/default/containers/rows"
+
       - name: Terraform Plan
         run: |
           docker run --rm \
