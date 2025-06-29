@@ -12,5 +12,5 @@ output "key_vault_uri" {
 
 output "resource_group_id" {
   description = "The ID of the resource group."
-  value       = azurerm_resource_group.keyvault_rg.id
+  value       = module.resource_group.resource_id
 }
