@@ -63,7 +63,7 @@ jobs:
             -e TF_LOCATION \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
-            hashicorp/terraform:latest apply -input=false -auto-approve tfplan -var "resource_group_name=$TF_RESOURCE_GROUP_NAME" -var "location=$TF_LOCATION"
+            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
 
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
