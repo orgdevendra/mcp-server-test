@@ -65,7 +65,6 @@ jobs:
             -var 'key_vault_purge_protection_enabled=true'
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           docker run --rm \
             -e ARM_CLIENT_ID \
