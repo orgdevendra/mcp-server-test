@@ -53,6 +53,7 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest plan -input=false -out=tfplan \
+            -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
             -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
             -var 'location=${{ secrets.TF_LOCATION }}' \
             -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
@@ -73,7 +74,8 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
-            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
+            hashicorp/terraform:latest apply -input=false -auto-approve tfplan \
+            -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}'
 
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()

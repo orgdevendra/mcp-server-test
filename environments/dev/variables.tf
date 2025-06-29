@@ -53,3 +53,8 @@ variable "key_vault_purge_protection_enabled" {
   type        = bool
   default     = true
 }
+
+variable "subscription_id" {
+  description = "The Azure subscription ID."
+  type        = string
+}
