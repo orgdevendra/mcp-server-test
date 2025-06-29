@@ -83,7 +83,9 @@ jobs:
             -var 'app_service_plan_name=${{ secrets.TF_APP_SERVICE_PLAN_NAME }}' \
             -var 'app_service_plan_os_type=Linux' \
             -var 'app_service_plan_sku_name=P1v2' \
-            -var 'web_app_name=${{ secrets.TF_WEB_APP_NAME }}'
+            -var 'web_app_name=${{ secrets.TF_WEB_APP_NAME }}' \
+            -var 'web_app_kind=app' \
+            -var 'web_app_os_type=Linux'
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'

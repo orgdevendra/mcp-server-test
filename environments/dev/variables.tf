@@ -67,3 +67,13 @@ variable "web_app_name" {
   description = "Name of the Web App."
   type        = string
 }
+
+variable "web_app_kind" {
+  description = "The kind of the Web App (e.g., app, functionapp)."
+  type        = string
+}
+
+variable "web_app_os_type" {
+  description = "The OS type for the Web App (e.g., Linux, Windows)."
+  type        = string
+}

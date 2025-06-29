@@ -57,5 +57,7 @@ module "web_app" {
   name                = var.web_app_name
   location            = var.location
   resource_group_name = module.resource_group.name
-  service_plan_id     = module.app_service_plan.id
+  kind                = var.web_app_kind
+  os_type             = var.web_app_os_type
+  service_plan_resource_id = module.app_service_plan.id
 }
