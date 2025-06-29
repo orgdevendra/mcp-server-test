@@ -47,5 +47,6 @@ module "web_app" {
   version = ">= 0.1.0"
   resource = merge(var.web_app_resource, {
     resource_group_name = module.resource_group.resource.name
+    service_plan_id     = module.app_service_plan.resource.id
   })
 }

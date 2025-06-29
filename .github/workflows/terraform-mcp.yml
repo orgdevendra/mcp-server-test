@@ -66,12 +66,15 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
-            -e TF_RESOURCE_GROUP_NAME \
-            -e TF_LOCATION \
             -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
-            hashicorp/terraform:latest -chdir=/src plan -input=false -out=tfplan -var "resource_group_name=$TF_RESOURCE_GROUP_NAME" -var "location=$TF_LOCATION"
+            hashicorp/terraform:latest -chdir=/src plan -input=false -out=tfplan \
+            -var 'resource_group_resource={name="${{ secrets.TF_RESOURCE_GROUP_NAME }}",location="${{ secrets.TF_LOCATION }}"}' \
+            -var 'storage_account_resource={name="${{ secrets.TF_STORAGE_ACCOUNT_NAME }}",location="${{ secrets.TF_LOCATION }}",account_tier="Standard",account_replication_type="LRS"}' \
+            -var 'key_vault_resource={name="${{ secrets.TF_KEY_VAULT_NAME }}",location="${{ secrets.TF_LOCATION }}",tenant_id="${{ secrets.TF_TENANT_ID }}",sku_name="standard",soft_delete_retention_days=7,purge_protection_enabled=true}' \
+            -var 'app_service_plan_resource={name="${{ secrets.TF_APP_SERVICE_PLAN_NAME }}",location="${{ secrets.TF_LOCATION }}",os_type="Linux",sku_name="P1v2"}' \
+            -var 'web_app_resource={name="${{ secrets.TF_WEB_APP_NAME }}",location="${{ secrets.TF_LOCATION }}",service_plan_id=""}'
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -81,8 +84,6 @@ jobs:
             -e ARM_CLIENT_SECRET \
             -e ARM_SUBSCRIPTION_ID \
             -e ARM_TENANT_ID \
-            -e TF_RESOURCE_GROUP_NAME \
-            -e TF_LOCATION \
             -v ${{ github.workspace }}/environments/${{ matrix.env_folder }}:/src \
             -v ${{ github.workspace }}/tfstate:/workspace \
             -w /workspace \
