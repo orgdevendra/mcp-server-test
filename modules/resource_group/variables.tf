@@ -1,2 +1,1 @@
-variable "name" { type = string }
-variable "location" { type = string }
+# This file is intentionally left blank. The custom resource_group module has been deprecated in favor of the official AVM module.
