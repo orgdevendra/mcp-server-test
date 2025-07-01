@@ -10,33 +10,33 @@ terraform {
 
 provider "azurerm" {
   features {}
-  subscription_id = var.subscription_id
+  subscription_id = var.SUBSCRIPTION_ID
 }
 
 module "resource_group" {
   source   = "../../modules/resource_group"
-  name     = var.resource_group_name
-  location = var.location
+  name     = var.RESOURCE_GROUP_NAME
+  location = var.LOCATION
 }
 
 module "storage_account" {
   source              = "../../modules/storage_account"
-  name                = var.storage_account_name
-  location            = var.location
+  name                = var.STORAGE_ACCOUNT_NAME
+  location            = var.LOCATION
   resource_group_name = module.resource_group.name
-  account_tier        = var.storage_account_tier
-  account_replication_type = var.storage_account_replication_type
+  account_tier        = var.STORAGE_ACCOUNT_TIER
+  account_replication_type = var.STORAGE_ACCOUNT_REPLICATION_TYPE
 }
 
 module "key_vault" {
   source              = "../../modules/key_vault"
-  name                = var.key_vault_name
-  location            = var.location
+  name                = var.KEY_VAULT_NAME
+  location            = var.LOCATION
   resource_group_name = module.resource_group.name
-  tenant_id           = var.key_vault_tenant_id
-  sku_name            = var.key_vault_sku_name
-  soft_delete_retention_days = var.key_vault_soft_delete_retention_days
-  purge_protection_enabled   = var.key_vault_purge_protection_enabled
+  tenant_id           = var.KEY_VAULT_TENANT_ID
+  sku_name            = var.KEY_VAULT_SKU_NAME
+  soft_delete_retention_days = var.KEY_VAULT_SOFT_DELETE_RETENTION_DAYS
+  purge_protection_enabled   = var.KEY_VAULT_PURGE_PROTECTION_ENABLED
 }
 
 module "azure_sql_database" {
@@ -44,7 +44,7 @@ module "azure_sql_database" {
   sql_server_name         = var.SQL_SERVER_NAME
   sql_database_name       = var.SQL_DATABASE_NAME
   resource_group_name     = module.resource_group.name
-  location                = var.location
+  location                = var.LOCATION
   administrator_login     = var.SQL_ADMINISTRATOR_LOGIN
   administrator_login_password = var.SQL_ADMINISTRATOR_LOGIN_PASSWORD
   collation               = var.SQL_COLLATION
