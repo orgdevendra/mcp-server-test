@@ -110,6 +110,15 @@ Pause for approval if updates involve:
 - **Prompt File Maintenance:**
   - Update this prompt file with any new troubleshooting lessons or best practices as you encounter new Azure resource types or deployment scenarios.
 
+- **Resource Already Exists Error (Import Logic for All Resources):**
+  - If you see an error like:
+    > A resource with the ID "/subscriptions/.../resourceGroups/.../providers/Microsoft.Web/serverFarms/..." already exists - to be managed via Terraform this resource needs to be imported into the State.
+  - This means the resource exists in Azure but is not managed by Terraform. You **must import** it into the Terraform state before running `plan` or `apply`.
+  - The workflow is designed to attempt import for all resources (App Service Plan, SQL, Key Vault, etc.) before creation. If the resource exists, it is imported; if not, it is created.
+  - **This rule applies to all resources, not just SQL.**
+  - If you add a new resource type, ensure the workflow includes an import step for it, using the same variable naming convention.
+  - If you encounter this error, check that the import step is present and the variables are correct. If not, add or correct the import logic in the workflow YAML.
+
 ## References
 - [Terraform Registry](https://registry.terraform.io/)
 - [AVM Modules](https://github.com/Azure/terraform-azurerm-avm-res-keyvault)
