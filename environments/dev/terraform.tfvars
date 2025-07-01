@@ -18,4 +18,5 @@ SQL_SKU_NAME = "S0"
 SQL_MAX_SIZE_GB = 5
 SQL_READ_SCALE = false
 SQL_ZONE_REDUNDANT = false
+SQL_LOCATION = "uksouth"
 TAGS = {}
