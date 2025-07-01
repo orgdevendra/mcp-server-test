@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"resource_group","Source":"registry.terraform.io/Azure/avm-res-resources-resourcegroup/azurerm","Version":"0.2.1","Dir":".terraform/modules/resource_group"}]}

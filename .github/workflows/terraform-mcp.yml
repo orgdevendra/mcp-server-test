@@ -1,0 +1,502 @@
+name: Terraform MCP Server CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        env_folder: [dev] # Add 'prod' to this list to deploy prod as well
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      TF_RESOURCE_GROUP_NAME: ${{ secrets.TF_RESOURCE_GROUP_NAME }}
+      TF_LOCATION: ${{ secrets.TF_LOCATION }}
+      TF_STORAGE_ACCOUNT_NAME: ${{ secrets.TF_STORAGE_ACCOUNT_NAME }}
+      TF_KEY_VAULT_NAME: ${{ secrets.TF_KEY_VAULT_NAME }}
+      TF_KEY_VAULT_TENANT_ID: ${{ secrets.TF_KEY_VAULT_TENANT_ID }}
+      SQL_SERVER_NAME: ${{ secrets.SQL_SERVER_NAME }}
+      SQL_DATABASE_NAME: ${{ secrets.SQL_DATABASE_NAME }}
+      SQL_ADMINISTRATOR_LOGIN: ${{ secrets.SQL_ADMINISTRATOR_LOGIN }}
+      SQL_ADMINISTRATOR_LOGIN_PASSWORD: ${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}
+      SQL_COLLATION: ${{ secrets.SQL_COLLATION }}
+      SQL_SKU_NAME: ${{ secrets.SQL_SKU_NAME }}
+      SQL_MAX_SIZE_GB: ${{ secrets.SQL_MAX_SIZE_GB }}
+      SQL_READ_SCALE: ${{ secrets.SQL_READ_SCALE }}
+      SQL_ZONE_REDUNDANT: ${{ secrets.SQL_ZONE_REDUNDANT }}
+      TAGS: ${{ secrets.TAGS }}
+      APP_SERVICE_PLAN_NAME: ${{ secrets.APP_SERVICE_PLAN_NAME }}
+      APP_SERVICE_PLAN_LOCATION: ${{ secrets.APP_SERVICE_PLAN_LOCATION }}
+      APP_SERVICE_PLAN_SKU_TIER: ${{ secrets.APP_SERVICE_PLAN_SKU_TIER }}
+      APP_SERVICE_PLAN_SKU_SIZE: ${{ secrets.APP_SERVICE_PLAN_SKU_SIZE }}
+      WEB_APP_NAME: ${{ secrets.WEB_APP_NAME }}
+      WEB_APP_LOCATION: ${{ secrets.WEB_APP_LOCATION }}
+      WEB_APP_SKU: ${{ secrets.WEB_APP_SKU }}
+      WEB_APP_RUNTIME_STACK: ${{ secrets.WEB_APP_RUNTIME_STACK }}
+      WEB_APP_OS_TYPE: ${{ secrets.WEB_APP_OS_TYPE }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Prepare Terraform State Directory
+        run: mkdir -p ${{ github.workspace }}/tfstate
+
+      - name: Terraform Init
+        run: |
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest init -input=false
+
+      - name: Import or Create Resource Group
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+              'module.resource_group.azurerm_resource_group.this' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Resource Group not found, will be created by terraform apply."
+          else
+            echo "Resource Group imported successfully."
+          fi
+
+      - name: Import or Create Key Vault
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+              'module.key_vault.azurerm_key_vault.this' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.KeyVault/vaults/${{ secrets.TF_KEY_VAULT_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Key Vault not found, will be created by terraform apply."
+          else
+            echo "Key Vault imported successfully."
+          fi
+
+      - name: Import or Create Storage Account
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+              'module.storage_account.azurerm_storage_account.this' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Storage Account not found, will be created by terraform apply."
+          else
+            echo "Storage Account imported successfully."
+          fi
+
+      - name: Import or Create Storage Container
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+              'module.storage_account.azurerm_storage_container.rows' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}/blobServices/default/containers/rows"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Storage Container not found, will be created by terraform apply."
+          else
+            echo "Storage Container imported successfully."
+          fi
+
+      - name: Import or Create Data Lake Gen2 Filesystem
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+              'module.storage_account.azurerm_storage_data_lake_gen2_filesystem.rows' \
+              "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Data Lake Gen2 Filesystem not found, will be created by terraform apply."
+          else
+            echo "Data Lake Gen2 Filesystem imported successfully."
+          fi
+
+      - name: Import or Create Data Lake Gen2 Path Bronze
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+              'module.storage_account.azurerm_storage_data_lake_gen2_path.bronze' \
+              "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/bronze"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Data Lake Gen2 Path Bronze not found, will be created by terraform apply."
+          else
+            echo "Data Lake Gen2 Path Bronze imported successfully."
+          fi
+
+      - name: Import or Create Data Lake Gen2 Path Silver
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+              'module.storage_account.azurerm_storage_data_lake_gen2_path.silver' \
+              "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/silver"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Data Lake Gen2 Path Silver not found, will be created by terraform apply."
+          else
+            echo "Data Lake Gen2 Path Silver imported successfully."
+          fi
+
+      - name: Import or Create Data Lake Gen2 Path Gold
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+              'module.storage_account.azurerm_storage_data_lake_gen2_path.gold' \
+              "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/gold"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Data Lake Gen2 Path Gold not found, will be created by terraform apply."
+          else
+            echo "Data Lake Gen2 Path Gold imported successfully."
+          fi
+
+      - name: Import or Create SQL Server
+        run: |
+          TAGS_VAL="${TAGS:-}"; if [ -z "$TAGS_VAL" ]; then TAGS_VAL='{}'; fi
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'SQL_SERVER_NAME=${{ secrets.SQL_SERVER_NAME }}' \
+              -var 'SQL_ADMINISTRATOR_LOGIN=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
+              -var 'SQL_ADMINISTRATOR_LOGIN_PASSWORD=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
+              -var 'SQL_COLLATION=${{ secrets.SQL_COLLATION }}' \
+              -var 'SQL_SKU_NAME=${{ secrets.SQL_SKU_NAME }}' \
+              -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
+              -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
+              -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+              -var "TAGS=$TAGS_VAL" \
+              'module.azure_sql_database.azurerm_mssql_server.this' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "SQL Server not found, will be created by terraform apply."
+          else
+            echo "SQL Server imported successfully."
+          fi
+
+      - name: Import or Create SQL Database
+        run: |
+          TAGS_VAL="${TAGS:-}"; if [ -z "$TAGS_VAL" ]; then TAGS_VAL='{}'; fi
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'SQL_SERVER_NAME=${{ secrets.SQL_SERVER_NAME }}' \
+              -var 'SQL_DATABASE_NAME=${{ secrets.SQL_DATABASE_NAME }}' \
+              -var 'SQL_ADMINISTRATOR_LOGIN=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
+              -var 'SQL_ADMINISTRATOR_LOGIN_PASSWORD=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
+              -var 'SQL_COLLATION=${{ secrets.SQL_COLLATION }}' \
+              -var 'SQL_SKU_NAME=${{ secrets.SQL_SKU_NAME }}' \
+              -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
+              -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
+              -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+              -var "TAGS=$TAGS_VAL" \
+              'module.azure_sql_database.azurerm_mssql_database.this' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}/databases/${{ secrets.SQL_DATABASE_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "SQL Database not found, will be created by terraform apply."
+          else
+            echo "SQL Database imported successfully."
+          fi
+
+      - name: Terraform Plan
+        run: |
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest plan -input=false -out=tfplan \
+            -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+            -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+            -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+            -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+            -var 'STORAGE_ACCOUNT_TIER=Standard' \
+            -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+            -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+            -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+            -var 'KEY_VAULT_SKU_NAME=standard' \
+            -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+            -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+            -var 'SQL_SERVER_NAME=${{ secrets.SQL_SERVER_NAME }}' \
+            -var 'SQL_DATABASE_NAME=${{ secrets.SQL_DATABASE_NAME }}' \
+            -var 'SQL_ADMINISTRATOR_LOGIN=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
+            -var 'SQL_ADMINISTRATOR_LOGIN_PASSWORD=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
+            -var 'SQL_COLLATION=${{ secrets.SQL_COLLATION }}' \
+            -var 'SQL_SKU_NAME=${{ secrets.SQL_SKU_NAME }}' \
+            -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
+            -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
+            -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+            -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}" \
+            -var 'APP_SERVICE_PLAN_NAME=${{ secrets.APP_SERVICE_PLAN_NAME }}' \
+            -var 'APP_SERVICE_PLAN_LOCATION=${{ secrets.APP_SERVICE_PLAN_LOCATION }}' \
+            -var 'APP_SERVICE_PLAN_SKU_TIER=${{ secrets.APP_SERVICE_PLAN_SKU_TIER }}' \
+            -var 'APP_SERVICE_PLAN_SKU_SIZE=${{ secrets.APP_SERVICE_PLAN_SKU_SIZE }}'
+
+      - name: Terraform Apply
+        run: |
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
+      - name: Upload Terraform Plan as Artifact (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: environments/${{ matrix.env_folder }}/tfplan
+
+      - name: Import or Create App Service Plan
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'APP_SERVICE_PLAN_NAME=${{ secrets.APP_SERVICE_PLAN_NAME }}' \
+              -var 'APP_SERVICE_PLAN_LOCATION=${{ secrets.APP_SERVICE_PLAN_LOCATION }}' \
+              -var 'APP_SERVICE_PLAN_SKU_TIER=${{ secrets.APP_SERVICE_PLAN_SKU_TIER }}' \
+              -var 'APP_SERVICE_PLAN_SKU_SIZE=${{ secrets.APP_SERVICE_PLAN_SKU_SIZE }}' \
+              -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}" \
+              'module.app_service_plan.azurerm_app_service_plan.this' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Web/serverFarms/${{ secrets.APP_SERVICE_PLAN_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "App Service Plan not found, will be created by terraform apply."
+          else
+            echo "App Service Plan imported successfully."
+          fi
+
+      - name: Import or Create Web App
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'APP_SERVICE_PLAN_NAME=${{ secrets.APP_SERVICE_PLAN_NAME }}' \
+              -var 'APP_SERVICE_PLAN_LOCATION=${{ secrets.APP_SERVICE_PLAN_LOCATION }}' \
+              -var 'APP_SERVICE_PLAN_SKU_TIER=${{ secrets.APP_SERVICE_PLAN_SKU_TIER }}' \
+              -var 'APP_SERVICE_PLAN_SKU_SIZE=${{ secrets.APP_SERVICE_PLAN_SKU_SIZE }}' \
+              -var 'WEB_APP_NAME=${{ secrets.WEB_APP_NAME }}' \
+              -var 'WEB_APP_LOCATION=${{ secrets.WEB_APP_LOCATION }}' \
+              -var 'WEB_APP_SKU=${{ secrets.WEB_APP_SKU }}' \
+              -var 'WEB_APP_RUNTIME_STACK=${{ secrets.WEB_APP_RUNTIME_STACK }}' \
+              -var 'WEB_APP_OS_TYPE=${{ secrets.WEB_APP_OS_TYPE }}' \
+              -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}" \
+              'module.web_app.azurerm_linux_web_app.this' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Web/sites/${{ secrets.WEB_APP_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Web App not found, will be created by terraform apply."
+          else
+            echo "Web App imported successfully."
+          fi

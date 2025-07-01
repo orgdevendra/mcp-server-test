@@ -14,13 +14,15 @@ provider "azurerm" {
 }
 
 module "resource_group" {
-  source   = "../../modules/resource_group"
+  source  = "Azure/resource-group/azurerm"
+  version = "1.0.0"
   name     = var.RESOURCE_GROUP_NAME
   location = var.LOCATION
 }
 
 module "storage_account" {
-  source              = "../../modules/storage_account"
+  source  = "Azure/storage-account/azurerm"
+  version = "1.0.0"
   name                = var.STORAGE_ACCOUNT_NAME
   location            = var.LOCATION
   resource_group_name = module.resource_group.name
@@ -29,7 +31,8 @@ module "storage_account" {
 }
 
 module "key_vault" {
-  source              = "../../modules/key_vault"
+  source  = "Azure/key-vault/azurerm"
+  version = "1.0.0"
   name                = var.KEY_VAULT_NAME
   location            = var.LOCATION
   resource_group_name = module.resource_group.name
@@ -40,7 +43,8 @@ module "key_vault" {
 }
 
 module "azure_sql_database" {
-  source                  = "../../modules/azure_sql_database"
+  source  = "Azure/sql/azurerm"
+  version = "1.0.0"
   sql_server_name         = var.SQL_SERVER_NAME
   sql_database_name       = var.SQL_DATABASE_NAME
   resource_group_name     = module.resource_group.name
@@ -56,11 +60,12 @@ module "azure_sql_database" {
 }
 
 module "app_service_plan" {
-  source                  = "../../modules/app_service_plan"
-  APP_SERVICE_PLAN_NAME   = var.APP_SERVICE_PLAN_NAME
-  APP_SERVICE_PLAN_LOCATION = var.APP_SERVICE_PLAN_LOCATION
-  RESOURCE_GROUP_NAME     = module.resource_group.name
-  APP_SERVICE_PLAN_SKU_TIER = var.APP_SERVICE_PLAN_SKU_TIER
-  APP_SERVICE_PLAN_SKU_SIZE = var.APP_SERVICE_PLAN_SKU_SIZE
-  TAGS                    = var.TAGS
+  source  = "Azure/app-service-plan/azurerm"
+  version = "1.0.0"
+  name                = var.APP_SERVICE_PLAN_NAME
+  location            = var.APP_SERVICE_PLAN_LOCATION
+  resource_group_name = module.resource_group.name
+  sku_tier            = var.APP_SERVICE_PLAN_SKU_TIER
+  sku_size            = var.APP_SERVICE_PLAN_SKU_SIZE
+  tags                = var.TAGS
 }
