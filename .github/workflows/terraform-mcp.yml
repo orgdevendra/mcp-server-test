@@ -247,6 +247,7 @@ jobs:
 
       - name: Terraform Import SQL Server
         run: |
+          TAGS_VAL="${TAGS:-}"; if [ -z "$TAGS_VAL" ]; then TAGS_VAL='{}'; fi
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -266,7 +267,7 @@ jobs:
               -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
               -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
               -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-              -var 'TAGS=${{ secrets.TAGS }}' \
+              -var "TAGS=$TAGS_VAL" \
               'module.azure_sql_database.azurerm_mssql_server.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}"
 
@@ -292,7 +293,7 @@ jobs:
               -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
               -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
               -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-              -var 'TAGS=${{ secrets.TAGS }}' \
+              -var "TAGS=$TAGS_VAL" \
               'module.azure_sql_database.azurerm_mssql_database.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}/databases/${{ secrets.SQL_DATABASE_NAME }}"
 
@@ -326,7 +327,7 @@ jobs:
             -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
             -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
             -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-            -var 'TAGS=${{ secrets.TAGS }}'
+            -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}"
 
       - name: Terraform Apply
         run: |
@@ -358,7 +359,7 @@ jobs:
             -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
             -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
             -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-            -var 'TAGS=${{ secrets.TAGS }}'
+            -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}"
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
         uses: actions/upload-artifact@v4
