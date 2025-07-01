@@ -1,0 +1,6 @@
+main.tf
+outputs.tf
+variables.tf
+modules/_to_delete/app_service_plan/main.tf
+modules/_to_delete/app_service_plan/outputs.tf
+modules/_to_delete/app_service_plan/variables.tf

@@ -63,17 +63,17 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-              -var 'storage_account_tier=Standard' \
-              -var 'storage_account_replication_type=LRS' \
-              -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-              -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-              -var 'key_vault_sku_name=standard' \
-              -var 'key_vault_soft_delete_retention_days=7' \
-              -var 'key_vault_purge_protection_enabled=true' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.resource_group.azurerm_resource_group.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}"
 
@@ -87,17 +87,17 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-              -var 'storage_account_tier=Standard' \
-              -var 'storage_account_replication_type=LRS' \
-              -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-              -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-              -var 'key_vault_sku_name=standard' \
-              -var 'key_vault_soft_delete_retention_days=7' \
-              -var 'key_vault_purge_protection_enabled=true' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.key_vault.azurerm_key_vault.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.KeyVault/vaults/${{ secrets.TF_KEY_VAULT_NAME }}"
 
@@ -111,17 +111,17 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-              -var 'storage_account_tier=Standard' \
-              -var 'storage_account_replication_type=LRS' \
-              -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-              -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-              -var 'key_vault_sku_name=standard' \
-              -var 'key_vault_soft_delete_retention_days=7' \
-              -var 'key_vault_purge_protection_enabled=true' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_account.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}"
 
@@ -135,17 +135,17 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-              -var 'storage_account_tier=Standard' \
-              -var 'storage_account_replication_type=LRS' \
-              -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-              -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-              -var 'key_vault_sku_name=standard' \
-              -var 'key_vault_soft_delete_retention_days=7' \
-              -var 'key_vault_purge_protection_enabled=true' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_container.rows' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}/blobServices/default/containers/rows"
 
@@ -159,17 +159,17 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-              -var 'storage_account_tier=Standard' \
-              -var 'storage_account_replication_type=LRS' \
-              -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-              -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-              -var 'key_vault_sku_name=standard' \
-              -var 'key_vault_soft_delete_retention_days=7' \
-              -var 'key_vault_purge_protection_enabled=true' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_data_lake_gen2_filesystem.rows' \
               "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows"
 
@@ -183,17 +183,17 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-              -var 'storage_account_tier=Standard' \
-              -var 'storage_account_replication_type=LRS' \
-              -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-              -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-              -var 'key_vault_sku_name=standard' \
-              -var 'key_vault_soft_delete_retention_days=7' \
-              -var 'key_vault_purge_protection_enabled=true' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_data_lake_gen2_path.bronze' \
               "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/bronze"
 
@@ -207,17 +207,17 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-              -var 'storage_account_tier=Standard' \
-              -var 'storage_account_replication_type=LRS' \
-              -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-              -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-              -var 'key_vault_sku_name=standard' \
-              -var 'key_vault_soft_delete_retention_days=7' \
-              -var 'key_vault_purge_protection_enabled=true' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_data_lake_gen2_path.silver' \
               "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/silver"
 
@@ -231,17 +231,17 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-              -var 'storage_account_tier=Standard' \
-              -var 'storage_account_replication_type=LRS' \
-              -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-              -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-              -var 'key_vault_sku_name=standard' \
-              -var 'key_vault_soft_delete_retention_days=7' \
-              -var 'key_vault_purge_protection_enabled=true' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+              -var 'STORAGE_ACCOUNT_TIER=Standard' \
+              -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+              -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+              -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+              -var 'KEY_VAULT_SKU_NAME=standard' \
+              -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+              -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_data_lake_gen2_path.gold' \
               "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/gold"
 
@@ -255,18 +255,18 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'sql_server_name=${{ secrets.SQL_SERVER_NAME }}' \
-              -var 'sql_administrator_login=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
-              -var 'sql_administrator_login_password=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
-              -var 'sql_collation=${{ secrets.SQL_COLLATION }}' \
-              -var 'sql_sku_name=${{ secrets.SQL_SKU_NAME }}' \
-              -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
-              -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
-              -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-              -var 'tags=${{ secrets.TAGS }}' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'SQL_SERVER_NAME=${{ secrets.SQL_SERVER_NAME }}' \
+              -var 'SQL_ADMINISTRATOR_LOGIN=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
+              -var 'SQL_ADMINISTRATOR_LOGIN_PASSWORD=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
+              -var 'SQL_COLLATION=${{ secrets.SQL_COLLATION }}' \
+              -var 'SQL_SKU_NAME=${{ secrets.SQL_SKU_NAME }}' \
+              -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
+              -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
+              -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+              -var 'TAGS=${{ secrets.TAGS }}' \
               'module.azure_sql_database.azurerm_mssql_server.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}"
 
@@ -280,19 +280,19 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest import \
-              -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-              -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-              -var 'location=${{ secrets.TF_LOCATION }}' \
-              -var 'sql_server_name=${{ secrets.SQL_SERVER_NAME }}' \
-              -var 'sql_database_name=${{ secrets.SQL_DATABASE_NAME }}' \
-              -var 'sql_administrator_login=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
-              -var 'sql_administrator_login_password=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
-              -var 'sql_collation=${{ secrets.SQL_COLLATION }}' \
-              -var 'sql_sku_name=${{ secrets.SQL_SKU_NAME }}' \
-              -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
-              -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
-              -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-              -var 'tags=${{ secrets.TAGS }}' \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+              -var 'SQL_SERVER_NAME=${{ secrets.SQL_SERVER_NAME }}' \
+              -var 'SQL_DATABASE_NAME=${{ secrets.SQL_DATABASE_NAME }}' \
+              -var 'SQL_ADMINISTRATOR_LOGIN=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
+              -var 'SQL_ADMINISTRATOR_LOGIN_PASSWORD=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
+              -var 'SQL_COLLATION=${{ secrets.SQL_COLLATION }}' \
+              -var 'SQL_SKU_NAME=${{ secrets.SQL_SKU_NAME }}' \
+              -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
+              -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
+              -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+              -var 'TAGS=${{ secrets.TAGS }}' \
               'module.azure_sql_database.azurerm_mssql_database.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}/databases/${{ secrets.SQL_DATABASE_NAME }}"
 
@@ -306,27 +306,27 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest plan -input=false -out=tfplan \
-            -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-            -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-            -var 'location=${{ secrets.TF_LOCATION }}' \
-            -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-            -var 'storage_account_tier=Standard' \
-            -var 'storage_account_replication_type=LRS' \
-            -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-            -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-            -var 'key_vault_sku_name=standard' \
-            -var 'key_vault_soft_delete_retention_days=7' \
-            -var 'key_vault_purge_protection_enabled=true' \
-            -var 'sql_server_name=${{ secrets.SQL_SERVER_NAME }}' \
-            -var 'sql_database_name=${{ secrets.SQL_DATABASE_NAME }}' \
-            -var 'administrator_login=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
-            -var 'administrator_login_password=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
-            -var 'sql_collation=${{ secrets.SQL_COLLATION }}' \
-            -var 'sql_sku_name=${{ secrets.SQL_SKU_NAME }}' \
-            -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
-            -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
-            -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-            -var 'tags=${{ secrets.TAGS }}'
+            -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+            -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+            -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+            -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+            -var 'STORAGE_ACCOUNT_TIER=Standard' \
+            -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+            -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+            -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+            -var 'KEY_VAULT_SKU_NAME=standard' \
+            -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+            -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+            -var 'SQL_SERVER_NAME=${{ secrets.SQL_SERVER_NAME }}' \
+            -var 'SQL_DATABASE_NAME=${{ secrets.SQL_DATABASE_NAME }}' \
+            -var 'ADMINISTRATOR_LOGIN=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
+            -var 'ADMINISTRATOR_LOGIN_PASSWORD=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
+            -var 'SQL_COLLATION=${{ secrets.SQL_COLLATION }}' \
+            -var 'SQL_SKU_NAME=${{ secrets.SQL_SKU_NAME }}' \
+            -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
+            -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
+            -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+            -var 'TAGS=${{ secrets.TAGS }}'
 
       - name: Terraform Apply
         run: |
@@ -338,27 +338,27 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest apply -input=false -auto-approve tfplan \
-            -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-            -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-            -var 'location=${{ secrets.TF_LOCATION }}' \
-            -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-            -var 'storage_account_tier=Standard' \
-            -var 'storage_account_replication_type=LRS' \
-            -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
-            -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-            -var 'key_vault_sku_name=standard' \
-            -var 'key_vault_soft_delete_retention_days=7' \
-            -var 'key_vault_purge_protection_enabled=true' \
-            -var 'sql_server_name=${{ secrets.SQL_SERVER_NAME }}' \
-            -var 'sql_database_name=${{ secrets.SQL_DATABASE_NAME }}' \
-            -var 'administrator_login=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
-            -var 'administrator_login_password=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
-            -var 'sql_collation=${{ secrets.SQL_COLLATION }}' \
-            -var 'sql_sku_name=${{ secrets.SQL_SKU_NAME }}' \
-            -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
-            -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
-            -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-            -var 'tags=${{ secrets.TAGS }}'
+            -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+            -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+            -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
+            -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+            -var 'STORAGE_ACCOUNT_TIER=Standard' \
+            -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
+            -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
+            -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+            -var 'KEY_VAULT_SKU_NAME=standard' \
+            -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
+            -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
+            -var 'SQL_SERVER_NAME=${{ secrets.SQL_SERVER_NAME }}' \
+            -var 'SQL_DATABASE_NAME=${{ secrets.SQL_DATABASE_NAME }}' \
+            -var 'ADMINISTRATOR_LOGIN=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
+            -var 'ADMINISTRATOR_LOGIN_PASSWORD=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
+            -var 'SQL_COLLATION=${{ secrets.SQL_COLLATION }}' \
+            -var 'SQL_SKU_NAME=${{ secrets.SQL_SKU_NAME }}' \
+            -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
+            -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
+            -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+            -var 'TAGS=${{ secrets.TAGS }}'
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
         uses: actions/upload-artifact@v4
