@@ -71,11 +71,28 @@ Pause for approval if updates involve:
 
 ## Next Steps
 After scaffolding a new AVM-compliant module:
-1. **Reference the Module**: Add a module block for your new resource in the appropriate environment's `main.tf` (e.g., `environments/dev/main.tf`), wiring up all required variables.
+1. **Reference the Module in main.tf**: Open the appropriate environment's `main.tf` file (e.g., `environments/dev/main.tf`).
+   - Add the new module block for your resource (e.g., Azure SQL Database) **after the resource group module and before any dependent modules**.
+   - Wire up all required variables, using outputs from previous modules as needed (e.g., use `module.resource_group.name` for `resource_group_name`).
+   - Only modules referenced in `main.tf` will be deployed by Terraform and your CI/CD pipeline.
 2. **Commit and Push**: Commit your changes and push them to your GitHub repository.
 3. **CI/CD Deployment**: The GitHub Actions workflow will automatically detect and deploy the new resource, following your project's CI/CD process and branch protection rules.
 4. **Monitor and Validate**: Monitor the workflow run for successful deployment and validate the resource in Azure.
 5. **Iterate as Needed**: Make any necessary adjustments, update variables, or add outputs as your requirements evolve.
+
+> **Note:** If you do not add the new module block to `main.tf`, the resource will not be created or managed, even if the module exists in your repository.
+
+## Guided Workflow
+When you request a new resource (e.g., "Add an AVM-compliant module for Azure Cosmos DB"), you will be guided through each required step until the resource is successfully deployed:
+
+1. **Scaffold the Module**: The module code will be generated in the `modules/` directory.
+2. **Reference in main.tf**: You will be prompted to add the module block to the appropriate environment's `main.tf` (with clear placement and variable wiring instructions).
+3. **Update Variables**: You will be prompted to add any new variables to the environment's `variables.tf` and provide values as needed.
+4. **Commit and Push**: You will be reminded to commit and push your changes to the repository.
+5. **CI/CD Monitoring**: You will be prompted to monitor the GitHub Actions workflow for successful deployment.
+6. **Validation**: You will be prompted to validate the resource in Azure and make any necessary adjustments.
+
+> **You will not be left at any step—each action will be prompted until the resource is fully deployed and validated.**
 
 ---
 
