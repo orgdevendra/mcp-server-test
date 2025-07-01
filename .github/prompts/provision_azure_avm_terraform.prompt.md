@@ -97,6 +97,21 @@ When you request a new resource (e.g., "Add an AVM-compliant module for Azure Co
 
 > **You will not be left at any step—each action will be prompted until the resource is fully deployed and validated.**
 
+## Guided Workflow: Import Pre-existing SQL Server and Database
+If you are deploying to an environment where the Azure SQL Server or Database already exists, you must import them into the Terraform state before running plan/apply. This is handled automatically in the workflow, but you can also run the following commands locally:
+
+# Import SQL Server
+terraform import \
+  module.azure_sql_database.azurerm_mssql_server.this \
+  "/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/providers/Microsoft.Sql/servers/<sql_server_name>"
+
+# Import SQL Database
+terraform import \
+  module.azure_sql_database.azurerm_mssql_database.this \
+  "/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/providers/Microsoft.Sql/servers/<sql_server_name>/databases/<sql_database_name>"
+
+This ensures Terraform will manage the existing resources and avoid 'resource already exists' errors. If the resources do not exist, Terraform will create them as usual.
+
 ---
 
 *Happy automating and building on Azure!*
