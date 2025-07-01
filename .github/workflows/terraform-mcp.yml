@@ -355,28 +355,7 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
-            hashicorp/terraform:latest apply -input=false -auto-approve tfplan \
-            -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
-            -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
-            -var 'LOCATION=${{ secrets.TF_LOCATION }}' \
-            -var 'STORAGE_ACCOUNT_NAME=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
-            -var 'STORAGE_ACCOUNT_TIER=Standard' \
-            -var 'STORAGE_ACCOUNT_REPLICATION_TYPE=LRS' \
-            -var 'KEY_VAULT_NAME=${{ secrets.TF_KEY_VAULT_NAME }}' \
-            -var 'KEY_VAULT_TENANT_ID=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
-            -var 'KEY_VAULT_SKU_NAME=standard' \
-            -var 'KEY_VAULT_SOFT_DELETE_RETENTION_DAYS=7' \
-            -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
-            -var 'SQL_SERVER_NAME=${{ secrets.SQL_SERVER_NAME }}' \
-            -var 'SQL_DATABASE_NAME=${{ secrets.SQL_DATABASE_NAME }}' \
-            -var 'SQL_ADMINISTRATOR_LOGIN=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
-            -var 'SQL_ADMINISTRATOR_LOGIN_PASSWORD=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
-            -var 'SQL_COLLATION=${{ secrets.SQL_COLLATION }}' \
-            -var 'SQL_SKU_NAME=${{ secrets.SQL_SKU_NAME }}' \
-            -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
-            -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
-            -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-            -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}"
+            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
         uses: actions/upload-artifact@v4
