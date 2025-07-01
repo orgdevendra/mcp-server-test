@@ -32,6 +32,10 @@ jobs:
       SQL_READ_SCALE: ${{ secrets.SQL_READ_SCALE }}
       SQL_ZONE_REDUNDANT: ${{ secrets.SQL_ZONE_REDUNDANT }}
       TAGS: ${{ secrets.TAGS }}
+      APP_SERVICE_PLAN_NAME: ${{ secrets.APP_SERVICE_PLAN_NAME }}
+      APP_SERVICE_PLAN_LOCATION: ${{ secrets.APP_SERVICE_PLAN_LOCATION }}
+      APP_SERVICE_PLAN_SKU_TIER: ${{ secrets.APP_SERVICE_PLAN_SKU_TIER }}
+      APP_SERVICE_PLAN_SKU_SIZE: ${{ secrets.APP_SERVICE_PLAN_SKU_SIZE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -344,7 +348,11 @@ jobs:
             -var 'SQL_MAX_SIZE_GB=${{ secrets.SQL_MAX_SIZE_GB }}' \
             -var 'SQL_READ_SCALE=${{ secrets.SQL_READ_SCALE }}' \
             -var 'SQL_ZONE_REDUNDANT=${{ secrets.SQL_ZONE_REDUNDANT }}' \
-            -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}"
+            -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}" \
+            -var 'APP_SERVICE_PLAN_NAME=${{ secrets.APP_SERVICE_PLAN_NAME }}' \
+            -var 'APP_SERVICE_PLAN_LOCATION=${{ secrets.APP_SERVICE_PLAN_LOCATION }}' \
+            -var 'APP_SERVICE_PLAN_SKU_TIER=${{ secrets.APP_SERVICE_PLAN_SKU_TIER }}' \
+            -var 'APP_SERVICE_PLAN_SKU_SIZE=${{ secrets.APP_SERVICE_PLAN_SKU_SIZE }}'
 
       - name: Terraform Apply
         run: |

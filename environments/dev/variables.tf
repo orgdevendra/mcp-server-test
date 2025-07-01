@@ -121,3 +121,26 @@ variable "TAGS" {
   type        = map(string)
   default     = {}
 }
+
+variable "APP_SERVICE_PLAN_NAME" {
+  description = "The name of the App Service Plan."
+  type        = string
+}
+
+variable "APP_SERVICE_PLAN_LOCATION" {
+  description = "The Azure region for the App Service Plan."
+  type        = string
+  default     = "eastus"
+}
+
+variable "APP_SERVICE_PLAN_SKU_TIER" {
+  description = "The pricing tier for the App Service Plan (e.g., 'PremiumV2')."
+  type        = string
+  default     = "PremiumV2"
+}
+
+variable "APP_SERVICE_PLAN_SKU_SIZE" {
+  description = "The size of the App Service Plan (e.g., 'P1v2')."
+  type        = string
+  default     = "P1v2"
+}
