@@ -119,6 +119,27 @@ Pause for approval if updates involve:
   - If you add a new resource type, ensure the workflow includes an import step for it, using the same variable naming convention.
   - If you encounter this error, check that the import step is present and the variables are correct. If not, add or correct the import logic in the workflow YAML.
 
+## Import-or-Create Pattern for All Resource Imports
+
+> **Best Practice:**
+> For every resource import step in your workflow, use the following shell pattern to ensure the workflow is robust for both existing and new resources:
+>
+> ```sh
+> set +e
+> terraform import ...
+> rc=$?
+> set -e
+> if [ $rc -ne 0 ]; then
+>   echo "<Resource> not found, will be created by terraform apply."
+> else
+>   echo "<Resource> imported successfully."
+> fi
+> ```
+>
+> - Replace `<Resource>` with the actual resource name (e.g., Key Vault, Storage Account, etc.).
+> - This pattern ensures the workflow does not fail if the resource does not exist, and Terraform will create it during apply.
+> - Use this for all new resource types and modules added to the workflow.
+
 ## References
 - [Terraform Registry](https://registry.terraform.io/)
 - [AVM Modules](https://github.com/Azure/terraform-azurerm-avm-res-keyvault)
