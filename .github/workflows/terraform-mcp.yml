@@ -94,8 +94,9 @@ jobs:
             echo "Resource Group imported successfully."
           fi
 
-      - name: Terraform Import Key Vault
+      - name: Import or Create Key Vault
         run: |
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -117,9 +118,17 @@ jobs:
               -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.key_vault.azurerm_key_vault.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.KeyVault/vaults/${{ secrets.TF_KEY_VAULT_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Key Vault not found, will be created by terraform apply."
+          else
+            echo "Key Vault imported successfully."
+          fi
 
-      - name: Terraform Import Storage Account
+      - name: Import or Create Storage Account
         run: |
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -141,9 +150,17 @@ jobs:
               -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_account.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Storage Account not found, will be created by terraform apply."
+          else
+            echo "Storage Account imported successfully."
+          fi
 
-      - name: Terraform Import Storage Container
+      - name: Import or Create Storage Container
         run: |
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -165,9 +182,17 @@ jobs:
               -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_container.rows' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ secrets.TF_STORAGE_ACCOUNT_NAME }}/blobServices/default/containers/rows"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Storage Container not found, will be created by terraform apply."
+          else
+            echo "Storage Container imported successfully."
+          fi
 
-      - name: Terraform Import Data Lake Gen2 Filesystem
+      - name: Import or Create Data Lake Gen2 Filesystem
         run: |
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -189,9 +214,17 @@ jobs:
               -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_data_lake_gen2_filesystem.rows' \
               "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Data Lake Gen2 Filesystem not found, will be created by terraform apply."
+          else
+            echo "Data Lake Gen2 Filesystem imported successfully."
+          fi
 
-      - name: Terraform Import Data Lake Gen2 Path Bronze
+      - name: Import or Create Data Lake Gen2 Path Bronze
         run: |
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -213,9 +246,17 @@ jobs:
               -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_data_lake_gen2_path.bronze' \
               "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/bronze"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Data Lake Gen2 Path Bronze not found, will be created by terraform apply."
+          else
+            echo "Data Lake Gen2 Path Bronze imported successfully."
+          fi
 
-      - name: Terraform Import Data Lake Gen2 Path Silver
+      - name: Import or Create Data Lake Gen2 Path Silver
         run: |
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -237,9 +278,17 @@ jobs:
               -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_data_lake_gen2_path.silver' \
               "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/silver"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Data Lake Gen2 Path Silver not found, will be created by terraform apply."
+          else
+            echo "Data Lake Gen2 Path Silver imported successfully."
+          fi
 
-      - name: Terraform Import Data Lake Gen2 Path Gold
+      - name: Import or Create Data Lake Gen2 Path Gold
         run: |
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -261,6 +310,13 @@ jobs:
               -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.storage_account.azurerm_storage_data_lake_gen2_path.gold' \
               "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/gold"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Data Lake Gen2 Path Gold not found, will be created by terraform apply."
+          else
+            echo "Data Lake Gen2 Path Gold imported successfully."
+          fi
 
       - name: Import or Create SQL Server
         run: |
