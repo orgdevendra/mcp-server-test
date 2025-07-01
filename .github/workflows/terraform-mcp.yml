@@ -36,6 +36,11 @@ jobs:
       APP_SERVICE_PLAN_LOCATION: ${{ secrets.APP_SERVICE_PLAN_LOCATION }}
       APP_SERVICE_PLAN_SKU_TIER: ${{ secrets.APP_SERVICE_PLAN_SKU_TIER }}
       APP_SERVICE_PLAN_SKU_SIZE: ${{ secrets.APP_SERVICE_PLAN_SKU_SIZE }}
+      WEB_APP_NAME: ${{ secrets.WEB_APP_NAME }}
+      WEB_APP_LOCATION: ${{ secrets.WEB_APP_LOCATION }}
+      WEB_APP_SKU: ${{ secrets.WEB_APP_SKU }}
+      WEB_APP_RUNTIME_STACK: ${{ secrets.WEB_APP_RUNTIME_STACK }}
+      WEB_APP_OS_TYPE: ${{ secrets.WEB_APP_OS_TYPE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -370,3 +375,36 @@ jobs:
         with:
           name: terraform-plan
           path: environments/${{ matrix.env_folder }}/tfplan
+
+      - name: Import or Create Web App
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'APP_SERVICE_PLAN_NAME=${{ secrets.APP_SERVICE_PLAN_NAME }}' \
+              -var 'APP_SERVICE_PLAN_LOCATION=${{ secrets.APP_SERVICE_PLAN_LOCATION }}' \
+              -var 'APP_SERVICE_PLAN_SKU_TIER=${{ secrets.APP_SERVICE_PLAN_SKU_TIER }}' \
+              -var 'APP_SERVICE_PLAN_SKU_SIZE=${{ secrets.APP_SERVICE_PLAN_SKU_SIZE }}' \
+              -var 'WEB_APP_NAME=${{ secrets.WEB_APP_NAME }}' \
+              -var 'WEB_APP_LOCATION=${{ secrets.WEB_APP_LOCATION }}' \
+              -var 'WEB_APP_SKU=${{ secrets.WEB_APP_SKU }}' \
+              -var 'WEB_APP_RUNTIME_STACK=${{ secrets.WEB_APP_RUNTIME_STACK }}' \
+              -var 'WEB_APP_OS_TYPE=${{ secrets.WEB_APP_OS_TYPE }}' \
+              -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}" \
+              'module.web_app.azurerm_linux_web_app.this' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Web/sites/${{ secrets.WEB_APP_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Web App not found, will be created by terraform apply."
+          else
+            echo "Web App imported successfully."
+          fi
