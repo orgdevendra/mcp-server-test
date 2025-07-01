@@ -266,6 +266,7 @@ jobs:
               -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
               -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
               -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+              -var 'tags=${{ secrets.TAGS }}' \
               'module.azure_sql_database.azurerm_mssql_server.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}"
 
@@ -291,6 +292,7 @@ jobs:
               -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
               -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
               -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+              -var 'tags=${{ secrets.TAGS }}' \
               'module.azure_sql_database.azurerm_mssql_database.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}/databases/${{ secrets.SQL_DATABASE_NAME }}"
 
@@ -323,7 +325,8 @@ jobs:
             -var 'sql_sku_name=${{ secrets.SQL_SKU_NAME }}' \
             -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
             -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
-            -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}'
+            -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+            -var 'tags=${{ secrets.TAGS }}'
 
       - name: Terraform Apply
         run: |
@@ -354,7 +357,8 @@ jobs:
             -var 'sql_sku_name=${{ secrets.SQL_SKU_NAME }}' \
             -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
             -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
-            -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}'
+            -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}' \
+            -var 'tags=${{ secrets.TAGS }}'
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
         uses: actions/upload-artifact@v4

@@ -41,16 +41,16 @@ module "key_vault" {
 
 module "azure_sql_database" {
   source                  = "../../modules/azure_sql_database"
-  sql_server_name         = var.sql_server_name
-  sql_database_name       = var.sql_database_name
+  sql_server_name         = var.SQL_SERVER_NAME
+  sql_database_name       = var.SQL_DATABASE_NAME
   resource_group_name     = module.resource_group.name
   location                = var.location
-  administrator_login     = var.administrator_login
-  administrator_login_password = var.administrator_login_password
-  collation               = var.sql_collation
-  sku_name                = var.sql_sku_name
-  max_size_gb             = var.sql_max_size_gb
-  read_scale              = var.sql_read_scale
-  zone_redundant          = var.sql_zone_redundant
-  tags                    = var.tags
+  administrator_login     = var.SQL_ADMINISTRATOR_LOGIN
+  administrator_login_password = var.SQL_ADMINISTRATOR_LOGIN_PASSWORD
+  collation               = var.SQL_COLLATION
+  sku_name                = var.SQL_SKU_NAME
+  max_size_gb             = var.SQL_MAX_SIZE_GB
+  read_scale              = var.SQL_READ_SCALE
+  zone_redundant          = var.SQL_ZONE_REDUNDANT
+  tags                    = var.TAGS
 }

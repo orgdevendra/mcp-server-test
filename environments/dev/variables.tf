@@ -1,116 +1,116 @@
-variable "resource_group_name" {
+variable "RESOURCE_GROUP_NAME" {
   description = "The name of the resource group."
   type        = string
 }
 
-variable "location" {
+variable "LOCATION" {
   description = "The Azure region."
   type        = string
   default     = "eastus"
 }
 
-variable "storage_account_name" {
+variable "STORAGE_ACCOUNT_NAME" {
   description = "The name of the storage account."
   type        = string
 }
 
-variable "storage_account_tier" {
+variable "STORAGE_ACCOUNT_TIER" {
   description = "The tier of the storage account."
   type        = string
   default     = "Standard"
 }
 
-variable "storage_account_replication_type" {
+variable "STORAGE_ACCOUNT_REPLICATION_TYPE" {
   description = "The replication type of the storage account."
   type        = string
   default     = "LRS"
 }
 
-variable "key_vault_name" {
+variable "KEY_VAULT_NAME" {
   description = "The name of the Key Vault."
   type        = string
 }
 
-variable "key_vault_tenant_id" {
+variable "KEY_VAULT_TENANT_ID" {
   description = "The Azure AD tenant ID for the Key Vault."
   type        = string
 }
 
-variable "key_vault_sku_name" {
+variable "KEY_VAULT_SKU_NAME" {
   description = "The SKU name for the Key Vault."
   type        = string
   default     = "standard"
 }
 
-variable "key_vault_soft_delete_retention_days" {
+variable "KEY_VAULT_SOFT_DELETE_RETENTION_DAYS" {
   description = "Soft delete retention days for Key Vault."
   type        = number
   default     = 7
 }
 
-variable "key_vault_purge_protection_enabled" {
+variable "KEY_VAULT_PURGE_PROTECTION_ENABLED" {
   description = "Enable purge protection for Key Vault."
   type        = bool
   default     = true
 }
 
-variable "subscription_id" {
+variable "SUBSCRIPTION_ID" {
   description = "The Azure subscription ID."
   type        = string
 }
 
-variable "sql_server_name" {
+variable "SQL_SERVER_NAME" {
   description = "The name of the SQL Server."
   type        = string
 }
 
-variable "sql_database_name" {
+variable "SQL_DATABASE_NAME" {
   description = "The name of the SQL Database."
   type        = string
 }
 
-variable "administrator_login" {
+variable "SQL_ADMINISTRATOR_LOGIN" {
   description = "The administrator login name for the SQL Server."
   type        = string
 }
 
-variable "administrator_login_password" {
+variable "SQL_ADMINISTRATOR_LOGIN_PASSWORD" {
   description = "The administrator login password for the SQL Server."
   type        = string
   sensitive   = true
 }
 
-variable "sql_collation" {
+variable "SQL_COLLATION" {
   description = "The collation for the SQL Database."
   type        = string
   default     = "SQL_Latin1_General_CP1_CI_AS"
 }
 
-variable "sql_sku_name" {
+variable "SQL_SKU_NAME" {
   description = "The SKU name for the SQL Database."
   type        = string
   default     = "S0"
 }
 
-variable "sql_max_size_gb" {
+variable "SQL_MAX_SIZE_GB" {
   description = "The max size of the SQL Database in GB."
   type        = number
   default     = 5
 }
 
-variable "sql_read_scale" {
+variable "SQL_READ_SCALE" {
   description = "Enable read scale-out on the SQL Database."
   type        = bool
   default     = false
 }
 
-variable "sql_zone_redundant" {
+variable "SQL_ZONE_REDUNDANT" {
   description = "Whether the SQL Database is zone redundant."
   type        = bool
   default     = false
 }
 
-variable "tags" {
+variable "TAGS" {
   description = "A map of tags to assign to the SQL resources."
   type        = map(string)
   default     = {}
