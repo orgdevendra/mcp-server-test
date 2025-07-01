@@ -65,6 +65,22 @@ Pause for approval if updates involve:
 - Automate with GitHub Actions
 - Maintain Terraform and workflow validity
 
+## Strict Variable Naming Convention Requirement
+
+> **All variable names must be consistent and strictly matched across every layer of the project:**
+> - **Terraform modules** (e.g., `modules/azure_sql_database/variables.tf`)
+> - **Root environment files** (e.g., `environments/dev/variables.tf`)
+> - **Workflow YAML** (e.g., `.github/workflows/terraform-mcp.yml`)
+> - **GitHub secrets** (used for CI/CD)
+>
+> **This is a mandatory requirement.**
+> - Every variable name must be identical in spelling, case, and underscores across all files and configuration layers.
+> - Any new resource, module, or workflow must strictly adhere to this convention.
+> - The prompt file and all documentation must reinforce this rule.
+>
+> **If you update or add variables, you must update all relevant files and secrets to match.**
+> - Inconsistencies will cause deployment failures or misconfigurations.
+
 ## References
 - [Terraform Registry](https://registry.terraform.io/)
 - [AVM Modules](https://github.com/Azure/terraform-azurerm-avm-res-keyvault)
