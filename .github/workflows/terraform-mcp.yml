@@ -245,9 +245,10 @@ jobs:
               'module.storage_account.azurerm_storage_data_lake_gen2_path.gold' \
               "https://${{ secrets.TF_STORAGE_ACCOUNT_NAME }}.dfs.core.windows.net/rows/gold"
 
-      - name: Terraform Import SQL Server
+      - name: Import or Create SQL Server
         run: |
           TAGS_VAL="${TAGS:-}"; if [ -z "$TAGS_VAL" ]; then TAGS_VAL='{}'; fi
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -270,9 +271,18 @@ jobs:
               -var "TAGS=$TAGS_VAL" \
               'module.azure_sql_database.azurerm_mssql_server.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "SQL Server not found, will be created by terraform apply."
+          else
+            echo "SQL Server imported successfully."
+          fi
 
-      - name: Terraform Import SQL Database
+      - name: Import or Create SQL Database
         run: |
+          TAGS_VAL="${TAGS:-}"; if [ -z "$TAGS_VAL" ]; then TAGS_VAL='{}'; fi
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -296,6 +306,13 @@ jobs:
               -var "TAGS=$TAGS_VAL" \
               'module.azure_sql_database.azurerm_mssql_database.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Sql/servers/${{ secrets.SQL_SERVER_NAME }}/databases/${{ secrets.SQL_DATABASE_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "SQL Database not found, will be created by terraform apply."
+          else
+            echo "SQL Database imported successfully."
+          fi
 
       - name: Terraform Plan
         run: |
