@@ -45,8 +45,8 @@ module "azure_sql_database" {
   sql_database_name       = var.sql_database_name
   resource_group_name     = module.resource_group.name
   location                = var.location
-  administrator_login     = var.sql_administrator_login
-  administrator_login_password = var.sql_administrator_login_password
+  administrator_login     = var.administrator_login
+  administrator_login_password = var.administrator_login_password
   collation               = var.sql_collation
   sku_name                = var.sql_sku_name
   max_size_gb             = var.sql_max_size_gb
