@@ -62,8 +62,9 @@ jobs:
             -w /workspace/environments/${{ matrix.env_folder }} \
             hashicorp/terraform:latest init -input=false
 
-      - name: Terraform Import Resource Group
+      - name: Import or Create Resource Group
         run: |
+          set +e
           docker run --rm \
             -e ARM_CLIENT_ID \
             -e ARM_CLIENT_SECRET \
@@ -85,6 +86,13 @@ jobs:
               -var 'KEY_VAULT_PURGE_PROTECTION_ENABLED=true' \
               'module.resource_group.azurerm_resource_group.this' \
               "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "Resource Group not found, will be created by terraform apply."
+          else
+            echo "Resource Group imported successfully."
+          fi
 
       - name: Terraform Import Key Vault
         run: |
