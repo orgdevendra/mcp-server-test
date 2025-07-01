@@ -58,3 +58,60 @@ variable "subscription_id" {
   description = "The Azure subscription ID."
   type        = string
 }
+
+variable "sql_server_name" {
+  description = "The name of the SQL Server."
+  type        = string
+}
+
+variable "sql_database_name" {
+  description = "The name of the SQL Database."
+  type        = string
+}
+
+variable "administrator_login" {
+  description = "The administrator login name for the SQL Server."
+  type        = string
+}
+
+variable "administrator_login_password" {
+  description = "The administrator login password for the SQL Server."
+  type        = string
+  sensitive   = true
+}
+
+variable "sql_collation" {
+  description = "The collation for the SQL Database."
+  type        = string
+  default     = "SQL_Latin1_General_CP1_CI_AS"
+}
+
+variable "sql_sku_name" {
+  description = "The SKU name for the SQL Database."
+  type        = string
+  default     = "S0"
+}
+
+variable "sql_max_size_gb" {
+  description = "The max size of the SQL Database in GB."
+  type        = number
+  default     = 5
+}
+
+variable "sql_read_scale" {
+  description = "Enable read scale-out on the SQL Database."
+  type        = bool
+  default     = false
+}
+
+variable "sql_zone_redundant" {
+  description = "Whether the SQL Database is zone redundant."
+  type        = bool
+  default     = false
+}
+
+variable "tags" {
+  description = "A map of tags to assign to the SQL resources."
+  type        = map(string)
+  default     = {}
+}

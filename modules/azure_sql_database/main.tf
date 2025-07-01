@@ -1,22 +1,18 @@
 # AVM-compliant Azure SQL Database module
 
-module "sql_server" {
-  source  = "../../modules/sql_server" # Use local path for development, or publish to registry for production
-  # version = ">= 0.1.0" # Only for registry modules
-
-  # Required variables
-  name                = var.sql_server_name
-  resource_group_name = var.resource_group_name
-  location            = var.location
+resource "azurerm_mssql_server" "this" {
+  name                         = var.sql_server_name
+  resource_group_name          = var.resource_group_name
+  location                     = var.location
+  version                      = "12.0"
   administrator_login          = var.administrator_login
   administrator_login_password = var.administrator_login_password
-
-  # Optional: Add more parameters as needed
+  tags                         = var.tags
 }
 
 resource "azurerm_mssql_database" "this" {
   name                = var.sql_database_name
-  server_id           = module.sql_server.id
+  server_id           = azurerm_mssql_server.this.id
   collation           = var.collation
   sku_name            = var.sku_name
   max_size_gb         = var.max_size_gb

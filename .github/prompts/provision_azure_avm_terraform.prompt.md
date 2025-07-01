@@ -30,6 +30,9 @@ Provision and manage Azure resources using modular, AVM-compliant Terraform code
 3. **Compare**: Parse and compare semantic versions to identify available updates for each module.
 4. **Review**: For potential breaking changes, fetch and review the module changelog or documentation from the module's [GitHub repository](https://github.com/Azure/terraform-azurerm-avm-res-keyvault) or registry page.
 5. **Update**: Apply version updates and adjust module parameters as required.
+   - **If using a local module as a dependency, ensure the referenced directory exists and is committed to the repository.**
+   - **If using a registry module, ensure the source is correct and the module is published.**
+   - **Do not reference a local module path that does not exist, or you will get an 'Unreadable module directory' error.**
 6. **Validate**: Run `terraform validate` and, if available, a linter (e.g., `tflint`) to ensure code and configuration compliance. Optionally, run `terraform plan` to preview changes.
 7. **Test**: Execute the CI/CD workflow on a feature branch to ensure all resources are managed and no errors occur (e.g., 'resource already exists').
 8. **Optimize & Maintain**: Refactor the workflow for clarity and maintainability. Restrict apply steps to production branches as needed. Document any customizations.
