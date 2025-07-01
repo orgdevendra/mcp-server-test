@@ -314,7 +314,16 @@ jobs:
             -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
             -var 'key_vault_sku_name=standard' \
             -var 'key_vault_soft_delete_retention_days=7' \
-            -var 'key_vault_purge_protection_enabled=true'
+            -var 'key_vault_purge_protection_enabled=true' \
+            -var 'sql_server_name=${{ secrets.SQL_SERVER_NAME }}' \
+            -var 'sql_database_name=${{ secrets.SQL_DATABASE_NAME }}' \
+            -var 'sql_administrator_login=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
+            -var 'sql_administrator_login_password=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
+            -var 'sql_collation=${{ secrets.SQL_COLLATION }}' \
+            -var 'sql_sku_name=${{ secrets.SQL_SKU_NAME }}' \
+            -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
+            -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
+            -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}'
 
       - name: Terraform Apply
         run: |
@@ -325,8 +334,27 @@ jobs:
             -e ARM_TENANT_ID \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/environments/${{ matrix.env_folder }} \
-            hashicorp/terraform:latest apply -input=false -auto-approve tfplan
-
+            hashicorp/terraform:latest apply -input=false -auto-approve tfplan \
+            -var 'subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+            -var 'resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+            -var 'location=${{ secrets.TF_LOCATION }}' \
+            -var 'storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}' \
+            -var 'storage_account_tier=Standard' \
+            -var 'storage_account_replication_type=LRS' \
+            -var 'key_vault_name=${{ secrets.TF_KEY_VAULT_NAME }}' \
+            -var 'key_vault_tenant_id=${{ secrets.TF_KEY_VAULT_TENANT_ID }}' \
+            -var 'key_vault_sku_name=standard' \
+            -var 'key_vault_soft_delete_retention_days=7' \
+            -var 'key_vault_purge_protection_enabled=true' \
+            -var 'sql_server_name=${{ secrets.SQL_SERVER_NAME }}' \
+            -var 'sql_database_name=${{ secrets.SQL_DATABASE_NAME }}' \
+            -var 'sql_administrator_login=${{ secrets.SQL_ADMINISTRATOR_LOGIN }}' \
+            -var 'sql_administrator_login_password=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}' \
+            -var 'sql_collation=${{ secrets.SQL_COLLATION }}' \
+            -var 'sql_sku_name=${{ secrets.SQL_SKU_NAME }}' \
+            -var 'sql_max_size_gb=${{ secrets.SQL_MAX_SIZE_GB }}' \
+            -var 'sql_read_scale=${{ secrets.SQL_READ_SCALE }}' \
+            -var 'sql_zone_redundant=${{ secrets.SQL_ZONE_REDUNDANT }}'
       - name: Upload Terraform Plan as Artifact (optional)
         if: always()
         uses: actions/upload-artifact@v4
