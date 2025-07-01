@@ -110,6 +110,12 @@ variable "SQL_ZONE_REDUNDANT" {
   default     = false
 }
 
+variable "SQL_LOCATION" {
+  description = "The Azure region for SQL resources."
+  type        = string
+  default     = "uksouth"
+}
+
 variable "TAGS" {
   description = "A map of tags to assign to the SQL resources."
   type        = map(string)

@@ -44,7 +44,7 @@ module "azure_sql_database" {
   sql_server_name         = var.SQL_SERVER_NAME
   sql_database_name       = var.SQL_DATABASE_NAME
   resource_group_name     = module.resource_group.name
-  location                = var.LOCATION
+  location                = var.SQL_LOCATION
   administrator_login     = var.SQL_ADMINISTRATOR_LOGIN
   administrator_login_password = var.SQL_ADMINISTRATOR_LOGIN_PASSWORD
   collation               = var.SQL_COLLATION
