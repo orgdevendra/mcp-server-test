@@ -1,8 +1,8 @@
 # AVM-compliant Azure SQL Database module
 
 module "sql_server" {
-  source  = "Azure/avm-res-mssqlserver/azurerm"
-  version = ">= 0.1.0"
+  source  = "../../modules/sql_server" # Use local path for development, or publish to registry for production
+  # version = ">= 0.1.0" # Only for registry modules
 
   # Required variables
   name                = var.sql_server_name
@@ -23,12 +23,4 @@ resource "azurerm_mssql_database" "this" {
   read_scale          = var.read_scale
   zone_redundant      = var.zone_redundant
   tags                = var.tags
-}
-
-output "sql_server_id" {
-  value = module.sql_server.id
-}
-
-output "sql_database_id" {
-  value = azurerm_mssql_database.this.id
 }
