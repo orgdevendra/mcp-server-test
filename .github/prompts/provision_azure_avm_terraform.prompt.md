@@ -81,12 +81,56 @@ Pause for approval if updates involve:
 > **If you update or add variables, you must update all relevant files and secrets to match.**
 > - Inconsistencies will cause deployment failures or misconfigurations.
 
+## Troubleshooting & Best Practices (from SQL Deployment Experience)
+
+- **Region Restrictions:**
+  - Some Azure resources (e.g., SQL Database) may not be provisionable in all regions due to Microsoft restrictions. Always check region availability before deployment.
+  - If you encounter a region restriction error, add a resource-specific location variable (e.g., `SQL_LOCATION`) and use it only for the affected module. Default to a supported region (e.g., `uksouth`).
+  - Do not set a workflow secret for the resource-specific location unless you want to override the default.
+
+- **Type Safety for Variables:**
+  - Ensure that all boolean and number variables are set as plain values (e.g., `false`, `5`), not as strings (e.g., `"false"`, `"5"`).
+  - If a secret is not set, Terraform will use the value from `terraform.tfvars` or the default in `variables.tf`.
+
+- **Workflow Plan/Apply Best Practice:**
+  - Always use `terraform plan` with all `-var` flags and output to a plan file.
+  - Use `terraform apply` with only the plan file (no `-var` flags) to ensure consistency and prevent drift.
+
+- **Variable Naming Consistency:**
+  - All variable names must match exactly (case, spelling, underscores) across modules, root, workflow, and secrets.
+  - If you add a new variable, update all relevant files and secrets.
+
+- **Import Logic:**
+  - For pre-existing resources, always import them into the Terraform state before running `plan` or `apply`.
+  - The workflow should attempt import and, if the resource does not exist, proceed to create it.
+
+- **Fallback Logic:**
+  - If a workflow secret is not set, the value from `terraform.tfvars` or the default in `variables.tf` will be used. Only set secrets if you want to override these values.
+
+- **Prompt File Maintenance:**
+  - Update this prompt file with any new troubleshooting lessons or best practices as you encounter new Azure resource types or deployment scenarios.
+
 ## References
 - [Terraform Registry](https://registry.terraform.io/)
 - [AVM Modules](https://github.com/Azure/terraform-azurerm-avm-res-keyvault)
 - [Terraform MCP Server](https://github.com/hashicorp/terraform-mcp-server)
 - [VS Code Copilot Prompt Files](https://code.visualstudio.com/docs/copilot/copilot-customization#_prompt-files-experimental)
 - [Reference Prompt](https://github.com/PlagueHO/github-copilot-assets-library/blob/main/prompts/update_avm_modules_in_bicep.prompt.md)
+
+## Sample AVM Web App Provisioning: Required Workflow Secrets
+
+When provisioning a new AVM-compliant Azure Web App, ensure the following variables are created as GitHub Actions workflow secrets (and are strictly matched in all Terraform code, tfvars, and workflow YAML):
+
+- `WEB_APP_NAME`
+- `WEB_APP_SERVICE_PLAN_NAME`
+- `WEB_APP_LOCATION` (e.g., `eastus`)
+- `WEB_APP_RESOURCE_GROUP_NAME`
+- `WEB_APP_SKU` (e.g., `S1`)
+- `WEB_APP_RUNTIME_STACK` (e.g., `DOTNETCORE|6.0`)
+- `WEB_APP_OS_TYPE` (e.g., `Linux` or `Windows`)
+- `TAGS` (optional, e.g., `{ environment = "dev" }`)
+
+> **Prompt:** When scaffolding a new web app, prompt the user to create these secrets in the repository for CI/CD security and deployment.
 
 ## Next Steps
 After scaffolding a new AVM-compliant module:

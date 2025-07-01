@@ -54,3 +54,13 @@ module "azure_sql_database" {
   zone_redundant          = var.SQL_ZONE_REDUNDANT
   tags                    = var.TAGS
 }
+
+module "app_service_plan" {
+  source                  = "../../modules/app_service_plan"
+  APP_SERVICE_PLAN_NAME   = var.APP_SERVICE_PLAN_NAME
+  APP_SERVICE_PLAN_LOCATION = var.APP_SERVICE_PLAN_LOCATION
+  RESOURCE_GROUP_NAME     = module.resource_group.name
+  APP_SERVICE_PLAN_SKU_TIER = var.APP_SERVICE_PLAN_SKU_TIER
+  APP_SERVICE_PLAN_SKU_SIZE = var.APP_SERVICE_PLAN_SKU_SIZE
+  TAGS                    = var.TAGS
+}
