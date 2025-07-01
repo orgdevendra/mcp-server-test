@@ -376,6 +376,34 @@ jobs:
           name: terraform-plan
           path: environments/${{ matrix.env_folder }}/tfplan
 
+      - name: Import or Create App Service Plan
+        run: |
+          set +e
+          docker run --rm \
+            -e ARM_CLIENT_ID \
+            -e ARM_CLIENT_SECRET \
+            -e ARM_SUBSCRIPTION_ID \
+            -e ARM_TENANT_ID \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/environments/${{ matrix.env_folder }} \
+            hashicorp/terraform:latest import \
+              -var 'SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}' \
+              -var 'RESOURCE_GROUP_NAME=${{ secrets.TF_RESOURCE_GROUP_NAME }}' \
+              -var 'APP_SERVICE_PLAN_NAME=${{ secrets.APP_SERVICE_PLAN_NAME }}' \
+              -var 'APP_SERVICE_PLAN_LOCATION=${{ secrets.APP_SERVICE_PLAN_LOCATION }}' \
+              -var 'APP_SERVICE_PLAN_SKU_TIER=${{ secrets.APP_SERVICE_PLAN_SKU_TIER }}' \
+              -var 'APP_SERVICE_PLAN_SKU_SIZE=${{ secrets.APP_SERVICE_PLAN_SKU_SIZE }}' \
+              -var "TAGS=${{ secrets.TAGS != '' && secrets.TAGS || '{}' }}" \
+              'module.app_service_plan.azurerm_app_service_plan.this' \
+              "/subscriptions/${{ secrets.ARM_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.TF_RESOURCE_GROUP_NAME }}/providers/Microsoft.Web/serverFarms/${{ secrets.APP_SERVICE_PLAN_NAME }}"
+          rc=$?
+          set -e
+          if [ $rc -ne 0 ]; then
+            echo "App Service Plan not found, will be created by terraform apply."
+          else
+            echo "App Service Plan imported successfully."
+          fi
+
       - name: Import or Create Web App
         run: |
           set +e
